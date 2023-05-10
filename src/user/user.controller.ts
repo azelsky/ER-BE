@@ -21,9 +21,9 @@ export class UserController {
   @Get('email-exists/:email')
   public async checkEmailExists(
     @Param() emailExistsDto: EmailExistsDto
-  ): Promise<{ exists: boolean }> {
-    const exists = await this._userService.checkEmailExists(emailExistsDto.email);
-    return { exists };
+  ): Promise<{ isExist: boolean }> {
+    const isExist = await this._userService.checkEmailExists(emailExistsDto.email);
+    return { isExist };
   }
 
   @UsePipes(ValidationPipe)
