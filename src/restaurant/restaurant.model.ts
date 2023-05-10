@@ -19,5 +19,5 @@ export class Restaurant extends Model<Restaurant, RestaurantCreationAttr> {
   name: string;
 
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
-  subDomainName: string;
+  subdomain: string;
 }
