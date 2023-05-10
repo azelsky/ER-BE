@@ -4,11 +4,14 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Restaurant } from './restaurant/restaurant.model';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { Role } from './role/role.model';
 import { RoleModule } from './role/role.module';
 import { User } from './user/user.model';
 import { UserModule } from './user/user.module';
+import { UserRestaurant } from './user-restaurant/user-restaurant.model';
+import { UserRestaurantModule } from './user-restaurant/user-restaurant.module';
 import { UserRole } from './user-role/user-role.model';
 
 @Module({
@@ -28,9 +31,10 @@ import { UserRole } from './user-role/user-role.model';
       username: process.env.USER,
       password: process.env.PASSWORD,
       database: 're',
-      models: [User, Role, UserRole],
+      models: [User, Role, Restaurant, UserRole, UserRestaurant],
       autoLoadModels: true
-    })
+    }),
+    UserRestaurantModule
   ]
 })
 export class AppModule {}
