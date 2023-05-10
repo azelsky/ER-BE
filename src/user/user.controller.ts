@@ -1,23 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-  UsePipes,
-  ValidationPipe
-} from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { EmailExistsDto } from './dto/email-exist.dto';
 import { UserService } from './user.service';
+import { SkipAuthGuard } from '../core/decorators/skip-auth.decorator';
 
 @Controller('/user')
 export class UserController {
   constructor(private readonly _userService: UserService) {}
 
-  @UsePipes(ValidationPipe)
+  @SkipAuthGuard()
   @Get('email-exists/:email')
   public async checkEmailExists(
     @Param() emailExistsDto: EmailExistsDto
@@ -26,13 +18,11 @@ export class UserController {
     return { isExist };
   }
 
-  @UsePipes(ValidationPipe)
   @Post()
   public async create(@Body() userDto: CreateUserDto): Promise<CreateUserDto> {
     return this._userService.createUser(userDto);
   }
 
-  @UsePipes(ValidationPipe)
   @Get(':id')
   public async getUser(@Param('id') id: string): Promise<CreateUserDto | null> {
     const user = await this._userService.getUser(id);
