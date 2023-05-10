@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  ConflictException,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { SubdomainExistsDto } from './dto/subdomain-exists.dto';
@@ -16,8 +27,14 @@ export class RestaurantController {
   }
 
   @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard('jwt'))
   @Post()
-  public create(@Body() dto: CreateRestaurantDto): Promise<Restaurant> {
+  public async create(@Body() dto: CreateRestaurantDto): Promise<Restaurant> {
+    const subdomainExists = await this._restaurantService.isSubdomainExists(dto.subdomain);
+    if (subdomainExists) {
+      throw new ConflictException('Subdomain already exists');
+    }
+
     return this._restaurantService.create(dto);
   }
 }

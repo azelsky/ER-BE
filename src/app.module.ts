@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { Restaurant } from './restaurant/restaurant.model';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { Role } from './role/role.model';
@@ -34,7 +35,8 @@ import { UserRole } from './user-role/user-role.model';
       models: [User, Role, Restaurant, UserRole, UserRestaurant],
       autoLoadModels: true
     }),
-    UserRestaurantModule
+    UserRestaurantModule,
+    AuthModule
   ]
 })
 export class AppModule {}
