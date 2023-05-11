@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public async validate(payload: IJwtPayload): Promise<{ idUser: string; email: string }> {
-    return { idUser: payload.sub, email: payload.email };
+  public async validate(payload: IJwtPayload): Promise<{ idUser: string }> {
+    return { idUser: payload.sub };
   }
 }

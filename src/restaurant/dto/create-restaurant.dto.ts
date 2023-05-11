@@ -7,8 +7,8 @@ export class CreateRestaurantDto {
 
   @Length(2, 255, { message: 'Subdomain must be between 2 and 255 characters' })
   @IsNotEmpty({ message: 'Subdomain is required' })
-  @Matches(/^[a-z-]+$/, {
-    message: 'Subdomain can only contain lowercase letters, hyphens (-).'
+  @Matches(/^[a-z0-9-]+$/, {
+    message: 'Subdomain can only contain lowercase letters, numbers, hyphens (-).'
   })
   readonly subdomain: string;
 }

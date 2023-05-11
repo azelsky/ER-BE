@@ -8,6 +8,7 @@ import { RestaurantService } from './restaurant.service';
 @Module({
   controllers: [RestaurantController],
   providers: [RestaurantService],
-  imports: [SequelizeModule.forFeature([Restaurant])]
+  imports: [SequelizeModule.forFeature([Restaurant])],
+  exports: [RestaurantService]
 })
 export class RestaurantModule {}

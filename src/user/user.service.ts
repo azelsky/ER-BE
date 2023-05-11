@@ -12,7 +12,7 @@ export class UserService {
     return await this._userRepository.findOne({ where: { email } }).then(user => !!user);
   }
 
-  public createUser(dto: CreateUserDto): Promise<CreateUserDto> {
+  public createUser(dto: CreateUserDto): Promise<User> {
     return this._userRepository.create(dto);
   }
 
