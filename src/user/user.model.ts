@@ -9,6 +9,7 @@ import { UserRole } from '../user-role/user-role.model';
 interface UserCreationAttr {
   name: string;
   email: string;
+  cognitoId: string;
 }
 
 @Table({ tableName: 'users' })

@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { SubdomainExistsDto } from './dto/subdomain-exists.dto';
@@ -18,11 +18,6 @@ export class RestaurantController {
 
   @Post()
   public async create(@Body() dto: CreateRestaurantDto): Promise<Restaurant> {
-    const subdomainExists = await this._restaurantService.isSubdomainExists(dto.subdomain);
-    if (subdomainExists) {
-      throw new ConflictException('Subdomain already exists');
-    }
-
     return this._restaurantService.create(dto);
   }
 }

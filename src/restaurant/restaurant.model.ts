@@ -6,7 +6,7 @@ import { UserRestaurant } from '../user-restaurant/user-restaurant.model';
 
 interface RestaurantCreationAttr {
   name: string;
-  subDomainName: string;
+  subdomain: string;
 }
 
 @Table({ tableName: 'restaurants' })

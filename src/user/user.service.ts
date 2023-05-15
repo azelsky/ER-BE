@@ -1,15 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
+import { AuthRegisterDto } from '../auth/dto/auth-register.dto';
+import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
+import { Restaurant } from '../restaurant/restaurant.model';
+import { RestaurantService } from '../restaurant/restaurant.service';
 import { Role } from '../role/role.model';
+import { RoleService } from '../role/role.service';
 import { Roles } from '../shared/constants';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User) private _userRepository: typeof User) {}
+  constructor(
+    @InjectModel(User) private _userRepository: typeof User,
+    @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
+    private readonly _sequelize: Sequelize,
+    private readonly _roleService: RoleService,
+    private readonly _restaurantService: RestaurantService,
+    private readonly _awsCognitoService: AwsCognitoService
+  ) {}
 
   public async checkEmailExists(email: string): Promise<boolean> {
     return await this._userRepository.findOne({ where: { email } }).then(user => !!user);
@@ -19,35 +31,42 @@ export class UserService {
     return this._userRepository.create(dto);
   }
 
-  public async createUserInTransaction(data: any, transaction: Transaction): Promise<User> {
-    return this._userRepository.create(data, { transaction });
-  }
+  public async createUserWithRestaurant(authRegisterDto: AuthRegisterDto): Promise<void> {
+    const transaction = await this._sequelize.transaction();
 
-  public async addRestaurantToUserInTransaction(
-    userId: string,
-    restaurantId: string,
-    transaction: Transaction
-  ): Promise<void> {
-    const user = await this._userRepository.findByPk(userId, { transaction });
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      const ownerRole = await this._roleService.getRoleByValue(Roles.Owner);
+
+      const restaurant = await this._restaurantService.create(
+        {
+          name: authRegisterDto.restaurantName,
+          subdomain: authRegisterDto.subdomain
+        },
+        { transaction }
+      );
+
+      const cognitoUserId = await this._awsCognitoService.registerUser(authRegisterDto);
+
+      const user = await this._userRepository.create(
+        {
+          cognitoId: cognitoUserId,
+          name: authRegisterDto.name,
+          email: authRegisterDto.email
+        },
+        { transaction }
+      );
+
+      await user.$add('restaurants', restaurant, { transaction });
+      await user.$add('role', ownerRole.id, {
+        through: { restaurantId: restaurant.id },
+        transaction
+      });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-
-    await user.$add('restaurants', restaurantId, { transaction });
-  }
-
-  public async addRoleToUserInTransaction(
-    userId: string,
-    roleId: string,
-    restaurantId: string,
-    transaction: Transaction
-  ): Promise<void> {
-    const user = await this._userRepository.findByPk(userId, { transaction });
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    await user.$add('role', roleId, { through: { restaurantId }, transaction });
   }
 
   public getUser(id: string): Promise<User | null> {

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Transaction } from 'sequelize';
+import { CreateOptions } from 'sequelize/types/model';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { Restaurant } from './restaurant.model';
@@ -9,15 +9,16 @@ import { Restaurant } from './restaurant.model';
 export class RestaurantService {
   constructor(@InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant) {}
 
-  public create(restaurant: CreateRestaurantDto): Promise<Restaurant> {
-    return this._restaurantRepository.create(restaurant);
-  }
-
-  public async createInTransaction(
-    data: CreateRestaurantDto,
-    transaction: Transaction
+  public async create(
+    restaurant: CreateRestaurantDto,
+    options: CreateOptions = {}
   ): Promise<Restaurant> {
-    return this._restaurantRepository.create(data, { transaction });
+    const subdomainExists = await this.isSubdomainExists(restaurant.subdomain);
+    if (subdomainExists) {
+      throw new ConflictException('Subdomain already exists');
+    }
+
+    return this._restaurantRepository.create(restaurant, options);
   }
 
   public isSubdomainExists(subdomain: string): Promise<boolean> {

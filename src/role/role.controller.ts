@@ -2,6 +2,7 @@ import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/c
 
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RoleService } from './role.service';
+import { Roles } from '../shared/constants';
 
 @Controller('role')
 export class RoleController {
@@ -13,7 +14,7 @@ export class RoleController {
   }
 
   @Get(':value')
-  public async getByValue(@Param('value') value: string): Promise<CreateRoleDto | null> {
+  public async getByValue(@Param('value') value: Roles): Promise<CreateRoleDto | null> {
     const role = await this._roleService.getRoleByValue(value);
 
     if (!role) {

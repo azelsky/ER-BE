@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import {
   AuthenticationDetails,
   CognitoUser,
@@ -6,9 +6,9 @@ import {
   CognitoUserPool
 } from 'amazon-cognito-identity-js';
 
-import { AuthLoginUserDto } from './dto/auth-login-user.dto';
-import { AuthRegisterDto } from './dto/auth-register.dto';
-import { AuthResponse } from './interfaces/auth-response.interface';
+import { AuthLoginUserDto } from '../../auth/dto/auth-login-user.dto';
+import { AuthRegisterDto } from '../../auth/dto/auth-register.dto';
+import { AuthResponse } from '../../auth/interfaces/auth-response.interface';
 
 @Injectable()
 export class AwsCognitoService {
@@ -33,7 +33,7 @@ export class AwsCognitoService {
         null,
         (err, result) => {
           if (!result) {
-            reject(err);
+            reject(new ConflictException(err.message));
           } else {
             resolve(result.userSub);
           }

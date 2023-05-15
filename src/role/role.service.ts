@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
 import { CreateRoleDto } from './dto/create-role.dto';
 import { Role } from './role.model';
+import { Roles } from '../shared/constants';
 
 @Injectable()
 export class RoleService {
@@ -12,7 +13,12 @@ export class RoleService {
     return this._roleRepository.create(dto);
   }
 
-  public getRoleByValue(value: string): Promise<Role | null> {
-    return this._roleRepository.findOne({ where: { value } });
+  public async getRoleByValue(value: Roles): Promise<Role> {
+    const role = await this._roleRepository.findOne({ where: { value } });
+    if (!role) {
+      throw new NotFoundException('Role not found');
+    }
+
+    return role;
   }
 }
