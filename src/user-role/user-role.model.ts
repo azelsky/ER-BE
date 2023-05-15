@@ -1,12 +1,14 @@
 import { UUIDV4 } from 'sequelize';
-import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
+import { Restaurant } from '../restaurant/restaurant.model';
 import { Role } from '../role/role.model';
 import { User } from '../user/user.model';
 
 interface UserRoleCreationAttr {
   roleId: string;
   userId: string;
+  restaurantId: string;
 }
 
 @Table({ tableName: 'user_role', createdAt: false, updatedAt: false })
@@ -25,4 +27,17 @@ export class UserRole extends Model<UserRole, UserRoleCreationAttr> {
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID })
   userId: string;
+
+  @ForeignKey(() => Restaurant)
+  @Column({ type: DataType.UUID })
+  restaurantId: string;
+
+  @BelongsTo(() => Restaurant, { foreignKey: 'restaurantId', onDelete: 'CASCADE' })
+  restaurant: Restaurant;
+
+  @BelongsTo(() => User, { foreignKey: 'userId', onDelete: 'CASCADE' })
+  user: User;
+
+  @BelongsTo(() => Role, { foreignKey: 'roleId', onDelete: 'CASCADE' })
+  role: Role;
 }

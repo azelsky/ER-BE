@@ -1,4 +1,4 @@
-import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
 import { Restaurant } from '../restaurant/restaurant.model';
 import { User } from '../user/user.model';
@@ -20,4 +20,10 @@ export class UserRestaurant
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID })
   userId: string;
+
+  @BelongsTo(() => User, { foreignKey: 'userId', onDelete: 'CASCADE' })
+  user: User;
+
+  @BelongsTo(() => Restaurant, { foreignKey: 'restaurantId', onDelete: 'CASCADE' })
+  restaurant: Restaurant;
 }

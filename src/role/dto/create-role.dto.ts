@@ -4,6 +4,6 @@ export class CreateRoleDto {
   @IsNotEmpty({ message: 'Value is required' })
   readonly value: string;
 
-  @IsNotEmpty({ message: 'Description is required' })
-  readonly description: string;
+  @IsNotEmpty({ message: 'Name is required' })
+  readonly name: string;
 }

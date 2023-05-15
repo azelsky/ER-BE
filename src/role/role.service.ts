@@ -12,7 +12,7 @@ export class RoleService {
     return this._roleRepository.create(dto);
   }
 
-  public getRoleByValue(value: string): Promise<CreateRoleDto | null> {
+  public getRoleByValue(value: string): Promise<Role | null> {
     return this._roleRepository.findOne({ where: { value } });
   }
 }

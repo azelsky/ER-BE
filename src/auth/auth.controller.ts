@@ -6,6 +6,8 @@ import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { SkipAuthGuard } from '../core/decorators/skip-auth.decorator';
 import { RestaurantService } from '../restaurant/restaurant.service';
+import { RoleService } from '../role/role.service';
+import { Roles } from '../shared/constants';
 import { UserService } from '../user/user.service';
 
 @Controller('auth')
@@ -13,12 +15,19 @@ export class AuthController {
   constructor(
     private readonly awsCognitoService: AwsCognitoService,
     private readonly _userService: UserService,
+    private readonly _roleService: RoleService,
     private readonly _restaurantService: RestaurantService
   ) {}
 
   @SkipAuthGuard()
   @Post('/register')
   public async register(@Body() authRegisterDto: AuthRegisterDto): Promise<boolean> {
+    const ownerRole = await this._roleService.getRoleByValue(Roles.Owner);
+
+    if (!ownerRole) {
+      throw new Error('Owner role not found');
+    }
+
     const cognitoUserId = await this.awsCognitoService.registerUser(authRegisterDto);
 
     const user = await this._userService.createUser({
@@ -33,6 +42,7 @@ export class AuthController {
     });
 
     await user.$set('restaurants', [restaurant]);
+    await user.$add('role', ownerRole, { through: { restaurantId: restaurant.id } });
 
     return true;
   }

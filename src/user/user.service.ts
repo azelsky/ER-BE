@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
+import { Role } from '../role/role.model';
+import { Roles } from '../shared/constants';
 
 @Injectable()
 export class UserService {
@@ -16,7 +18,28 @@ export class UserService {
     return this._userRepository.create(dto);
   }
 
-  public getUser(id: string): Promise<CreateUserDto | null> {
+  public getUser(id: string): Promise<User | null> {
     return this._userRepository.findOne({ where: { id } });
+  }
+
+  public getUserRolesForRestaurant(cognitoId: string, restaurantId: string): Promise<Array<Roles>> {
+    return this._userRepository
+      .findOne({
+        where: { cognitoId },
+        include: [
+          {
+            model: Role,
+            attributes: ['value'],
+            through: { attributes: [], where: { restaurantId } }
+          }
+        ]
+      })
+      .then(user => {
+        if (!user) {
+          return [];
+        } else {
+          return user.roles.map(role => role.value);
+        }
+      });
   }
 }
