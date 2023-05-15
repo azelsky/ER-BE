@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Transaction } from 'sequelize';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
@@ -16,6 +17,37 @@ export class UserService {
 
   public createUser(dto: CreateUserDto): Promise<User> {
     return this._userRepository.create(dto);
+  }
+
+  public async createUserInTransaction(data: any, transaction: Transaction): Promise<User> {
+    return this._userRepository.create(data, { transaction });
+  }
+
+  public async addRestaurantToUserInTransaction(
+    userId: string,
+    restaurantId: string,
+    transaction: Transaction
+  ): Promise<void> {
+    const user = await this._userRepository.findByPk(userId, { transaction });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await user.$add('restaurants', restaurantId, { transaction });
+  }
+
+  public async addRoleToUserInTransaction(
+    userId: string,
+    roleId: string,
+    restaurantId: string,
+    transaction: Transaction
+  ): Promise<void> {
+    const user = await this._userRepository.findByPk(userId, { transaction });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await user.$add('role', roleId, { through: { restaurantId }, transaction });
   }
 
   public getUser(id: string): Promise<User | null> {

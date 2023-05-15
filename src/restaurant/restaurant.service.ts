@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Transaction } from 'sequelize';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { Restaurant } from './restaurant.model';
@@ -10,6 +11,13 @@ export class RestaurantService {
 
   public create(restaurant: CreateRestaurantDto): Promise<Restaurant> {
     return this._restaurantRepository.create(restaurant);
+  }
+
+  public async createInTransaction(
+    data: CreateRestaurantDto,
+    transaction: Transaction
+  ): Promise<Restaurant> {
+    return this._restaurantRepository.create(data, { transaction });
   }
 
   public isSubdomainExists(subdomain: string): Promise<boolean> {

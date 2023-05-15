@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { Sequelize } from 'sequelize';
 
 import { AwsCognitoService } from './aws-cognito.service';
 import { AuthLoginUserDto } from './dto/auth-login-user.dto';
 import { AuthRegisterDto } from './dto/auth-register.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { SkipAuthGuard } from '../core/decorators/skip-auth.decorator';
 import { RestaurantService } from '../restaurant/restaurant.service';
@@ -16,35 +18,52 @@ export class AuthController {
     private readonly awsCognitoService: AwsCognitoService,
     private readonly _userService: UserService,
     private readonly _roleService: RoleService,
-    private readonly _restaurantService: RestaurantService
+    private readonly _restaurantService: RestaurantService,
+    private readonly sequelize: Sequelize
   ) {}
 
   @SkipAuthGuard()
   @Post('/register')
-  public async register(@Body() authRegisterDto: AuthRegisterDto): Promise<boolean> {
-    const ownerRole = await this._roleService.getRoleByValue(Roles.Owner);
+  public async register(@Body() authRegisterDto: AuthRegisterDto): Promise<RegisterResponseDto> {
+    const transaction = await this.sequelize.transaction();
 
-    if (!ownerRole) {
-      throw new Error('Owner role not found');
+    try {
+      const ownerRole = await this._roleService.getRoleByValue(Roles.Owner);
+
+      const cognitoUserId = await this.awsCognitoService.registerUser(authRegisterDto);
+
+      const user = await this._userService.createUserInTransaction(
+        {
+          cognitoId: cognitoUserId,
+          name: authRegisterDto.name,
+          email: authRegisterDto.email
+        },
+        transaction
+      );
+
+      const restaurant = await this._restaurantService.createInTransaction(
+        {
+          name: authRegisterDto.restaurantName,
+          subdomain: authRegisterDto.subdomain
+        },
+        transaction
+      );
+
+      await this._userService.addRestaurantToUserInTransaction(user.id, restaurant.id, transaction);
+      await this._userService.addRoleToUserInTransaction(
+        user.id,
+        ownerRole.id,
+        restaurant.id,
+        transaction
+      );
+
+      await transaction.commit();
+
+      return { success: true };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-
-    const cognitoUserId = await this.awsCognitoService.registerUser(authRegisterDto);
-
-    const user = await this._userService.createUser({
-      cognitoId: cognitoUserId,
-      name: authRegisterDto.name,
-      email: authRegisterDto.email
-    });
-
-    const restaurant = await this._restaurantService.create({
-      name: authRegisterDto.restaurantName,
-      subdomain: authRegisterDto.subdomain
-    });
-
-    await user.$set('restaurants', [restaurant]);
-    await user.$add('role', ownerRole, { through: { restaurantId: restaurant.id } });
-
-    return true;
   }
 
   @SkipAuthGuard()
