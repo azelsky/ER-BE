@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
+import { Roles } from '@shared/constants';
+
 import { CreateRoleDto } from './dto/create-role.dto';
-import { Role } from './role.model';
-import { Roles } from '../shared/constants';
+import { Role } from './roles.model';
 
 @Injectable()
-export class RoleService {
+export class RolesService {
   constructor(@InjectModel(Role) private _roleRepository: typeof Role) {}
 
   public async createRole(dto: CreateRoleDto): Promise<CreateRoleDto> {

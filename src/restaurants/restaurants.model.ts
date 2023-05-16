@@ -1,10 +1,10 @@
 import { UUIDV4 } from 'sequelize';
 import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
 
-import { Role } from '../role/role.model';
-import { User } from '../user/users.model';
+import { Role } from '../roles/roles.model';
 import { UserRestaurant } from '../user-restaurant/user-restaurant.model';
 import { UserRole } from '../user-role/user-role.model';
+import { User } from '../users/users.model';
 
 interface RestaurantCreationAttr {
   name: string;

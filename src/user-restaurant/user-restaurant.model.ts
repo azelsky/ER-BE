@@ -1,7 +1,7 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
-import { Restaurant } from '../restaurant/restaurants.model';
-import { User } from '../user/users.model';
+import { Restaurant } from '../restaurants/restaurants.model';
+import { User } from '../users/users.model';
 
 interface UserRestaurantCreationAttr {
   restaurantId: string;

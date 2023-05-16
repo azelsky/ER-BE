@@ -4,8 +4,8 @@ import { CreateOptions } from 'sequelize/types/model';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { Restaurant } from './restaurants.model';
-import { Role } from '../role/role.model';
-import { User } from '../user/users.model';
+import { Role } from '../roles/roles.model';
+import { User } from '../users/users.model';
 
 @Injectable()
 export class RestaurantsService {

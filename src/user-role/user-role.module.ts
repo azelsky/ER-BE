@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { UserRole } from './user-role.model';
-import { Role } from '../role/role.model';
-import { User } from '../user/users.model';
+import { Role } from '../roles/roles.model';
+import { User } from '../users/users.model';
 
 @Module({
   imports: [SequelizeModule.forFeature([Role, User, UserRole])]

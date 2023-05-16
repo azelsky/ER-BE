@@ -2,9 +2,9 @@ import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescr
 
 import { Roles } from '@shared/constants';
 
-import { Restaurant } from '../restaurant/restaurants.model';
-import { User } from '../user/users.model';
+import { Restaurant } from '../restaurants/restaurants.model';
 import { UserRole } from '../user-role/user-role.model';
+import { User } from '../users/users.model';
 
 interface RoleCreationAttr {
   value: string;

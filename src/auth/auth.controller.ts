@@ -4,7 +4,7 @@ import { SkipAuthGuard } from './decorators';
 import { AuthRegisterDto, RegisterResponseDto, AuthLoginUserDto } from './dto';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
-import { UsersService } from '../user/users.service';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {

@@ -1,8 +1,8 @@
 import { UUIDV4 } from 'sequelize';
 import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
 
-import { Restaurant } from '../restaurant/restaurants.model';
-import { Role } from '../role/role.model';
+import { Restaurant } from '../restaurants/restaurants.model';
+import { Role } from '../roles/roles.model';
 import { UserRestaurant } from '../user-restaurant/user-restaurant.model';
 import { UserRole } from '../user-role/user-role.model';
 
