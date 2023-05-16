@@ -7,21 +7,21 @@ import { AuthRegisterDto } from '@auth/dto';
 import { Roles } from '@shared/constants';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './user.model';
+import { User } from './users.model';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
-import { Restaurant } from '../restaurant/restaurant.model';
-import { RestaurantService } from '../restaurant/restaurant.service';
+import { Restaurant } from '../restaurant/restaurants.model';
+import { RestaurantsService } from '../restaurant/restaurants.service';
 import { Role } from '../role/role.model';
 import { RoleService } from '../role/role.service';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectModel(User) private _userRepository: typeof User,
     @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
     private readonly _sequelize: Sequelize,
     private readonly _roleService: RoleService,
-    private readonly _restaurantService: RestaurantService,
+    private readonly _restaurantsService: RestaurantsService,
     private readonly _awsCognitoService: AwsCognitoService
   ) {}
 
@@ -39,7 +39,7 @@ export class UserService {
     try {
       const ownerRole = await this._roleService.getRoleByValue(Roles.Owner);
 
-      const restaurant = await this._restaurantService.create(
+      const restaurant = await this._restaurantsService.create(
         {
           name: authRegisterDto.restaurantName,
           subdomain: authRegisterDto.subdomain

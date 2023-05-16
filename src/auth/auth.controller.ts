@@ -4,19 +4,19 @@ import { SkipAuthGuard } from './decorators';
 import { AuthRegisterDto, RegisterResponseDto, AuthLoginUserDto } from './dto';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
-import { UserService } from '../user/user.service';
+import { UsersService } from '../user/users.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly _awsCognitoService: AwsCognitoService,
-    private readonly _userService: UserService
+    private readonly _usersService: UsersService
   ) {}
 
   @SkipAuthGuard()
   @Post('/register')
   public async register(@Body() authRegisterDto: AuthRegisterDto): Promise<RegisterResponseDto> {
-    await this._userService.createUserWithRestaurant(authRegisterDto);
+    await this._usersService.createUserWithRestaurant(authRegisterDto);
     return { success: true };
   }
 

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
-import { Restaurant } from '../restaurant/restaurant.model';
+import { Restaurant } from '../restaurant/restaurants.model';
 import { Role } from '../role/role.model';
-import { User } from '../user/user.model';
+import { User } from '../user/users.model';
 import { UserRestaurant } from '../user-restaurant/user-restaurant.model';
 import { UserRole } from '../user-role/user-role.model';
 

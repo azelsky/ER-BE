@@ -5,18 +5,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
-import { RestaurantModule } from './restaurant/restaurant.module';
+import { RestaurantsModule } from './restaurant/restaurants.module';
 import { RoleModule } from './role/role.module';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './user/users.module';
 import { UserRestaurantModule } from './user-restaurant/user-restaurant.module';
 
 @Module({
   controllers: [AppController],
   providers: [AppService],
   imports: [
-    UserModule,
+    UsersModule,
     RoleModule,
-    RestaurantModule,
+    RestaurantsModule,
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`
     }),

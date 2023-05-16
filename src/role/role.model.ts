@@ -1,8 +1,9 @@
 import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
 
-import { Restaurant } from '../restaurant/restaurant.model';
-import { Roles } from '../shared/constants';
-import { User } from '../user/user.model';
+import { Roles } from '@shared/constants';
+
+import { Restaurant } from '../restaurant/restaurants.model';
+import { User } from '../user/users.model';
 import { UserRole } from '../user-role/user-role.model';
 
 interface RoleCreationAttr {

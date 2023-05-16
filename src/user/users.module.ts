@@ -1,25 +1,25 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
-import { UserController } from './user.controller';
-import { User } from './user.model';
-import { UserService } from './user.service';
+import { UsersController } from './users.controller';
+import { User } from './users.model';
+import { UsersService } from './users.service';
 import { AwsCognitoModule } from '../aws-cognito/aws-cognito.module';
-import { Restaurant } from '../restaurant/restaurant.model';
-import { RestaurantModule } from '../restaurant/restaurant.module';
+import { Restaurant } from '../restaurant/restaurants.model';
+import { RestaurantsModule } from '../restaurant/restaurants.module';
 import { Role } from '../role/role.model';
 import { RoleModule } from '../role/role.module';
 import { UserRole } from '../user-role/user-role.model';
 
 @Module({
-  controllers: [UserController],
-  providers: [UserService],
+  controllers: [UsersController],
+  providers: [UsersService],
   imports: [
     SequelizeModule.forFeature([User, Role, UserRole, Restaurant]),
     RoleModule,
-    RestaurantModule,
+    RestaurantsModule,
     AwsCognitoModule
   ],
-  exports: [UserService]
+  exports: [UsersService]
 })
-export class UserModule {}
+export class UsersModule {}

@@ -1,12 +1,15 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { UserService } from '../../user/user.service';
+import { UsersService } from '../../user/users.service';
 import { Roles, ROLES_ALLOWED_KEY } from '../constants';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly _reflector: Reflector, private readonly _userService: UserService) {}
+  constructor(
+    private readonly _reflector: Reflector,
+    private readonly _usersService: UsersService
+  ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const requireRoles = this._reflector.getAllAndOverride<Array<Roles>>(ROLES_ALLOWED_KEY, [
@@ -19,7 +22,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const roles = await this._userService.getUserRolesForRestaurant(
+    const roles = await this._usersService.getUserRolesForRestaurant(
       request.user.idUser,
       request.params.restaurantId
     );
