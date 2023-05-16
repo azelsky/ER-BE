@@ -75,6 +75,10 @@ export class UserService {
     return this._userRepository.findOne({ where: { id } });
   }
 
+  public getUserByCognitoId(cognitoId: string): Promise<User | null> {
+    return this._userRepository.findOne({ where: { cognitoId } });
+  }
+
   public getUserRolesForRestaurant(cognitoId: string, restaurantId: string): Promise<Array<Roles>> {
     return this._userRepository
       .findOne({
