@@ -27,6 +27,18 @@ module.exports = {
         'newlines-between': 'always',
         alphabetize: { order: 'asc', caseInsensitive: true },
         groups: ['builtin', 'external', 'internal', ['sibling', 'parent']],
+        pathGroups: [
+          {
+            pattern: '@auth/**',
+            group: 'internal',
+            position: 'after'
+          },
+          {
+            pattern: '@shared/**',
+            group: 'internal',
+            position: 'after'
+          },
+        ],
         pathGroupsExcludedImportTypes: []
       }
     ]

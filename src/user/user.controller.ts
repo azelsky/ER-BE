@@ -1,9 +1,10 @@
 import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 
+import { SkipAuthGuard } from '@auth/decorators/skip-auth.decorator';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { EmailExistsDto } from './dto/email-exist.dto';
 import { UserService } from './user.service';
-import { SkipAuthGuard } from '../core/decorators/skip-auth.decorator';
 
 @Controller('/user')
 export class UserController {

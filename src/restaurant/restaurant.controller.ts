@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
+import { SkipAuthGuard } from '@auth/decorators';
+
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { SubdomainExistsDto } from './dto/subdomain-exists.dto';
 import { Restaurant } from './restaurant.model';
 import { RestaurantService } from './restaurant.service';
-import { SkipAuthGuard } from '../core/decorators/skip-auth.decorator';
 
 @Controller('restaurant')
 export class RestaurantController {

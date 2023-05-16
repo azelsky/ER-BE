@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 
+import { AuthRegisterDto } from '@auth/dto';
+
+import { Roles } from '@shared/constants';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
-import { AuthRegisterDto } from '../auth/dto/auth-register.dto';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
 import { Restaurant } from '../restaurant/restaurant.model';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { Role } from '../role/role.model';
 import { RoleService } from '../role/role.service';
-import { Roles } from '../shared/constants';
 
 @Injectable()
 export class UserService {

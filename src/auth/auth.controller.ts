@@ -1,11 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
-import { AuthLoginUserDto } from './dto/auth-login-user.dto';
-import { AuthRegisterDto } from './dto/auth-register.dto';
-import { RegisterResponseDto } from './dto/register-response.dto';
+import { SkipAuthGuard } from './decorators';
+import { AuthRegisterDto, RegisterResponseDto, AuthLoginUserDto } from './dto';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
-import { SkipAuthGuard } from '../core/decorators/skip-auth.decorator';
 import { UserService } from '../user/user.service';
 
 @Controller('auth')

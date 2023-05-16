@@ -1,8 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 
+import { AuthGuard } from '@auth/guards';
+
 import { AppModule } from './app.module';
-import { AuthGuard } from './core/guards/auth.guard';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
