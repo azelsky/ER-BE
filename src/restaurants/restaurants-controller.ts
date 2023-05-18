@@ -5,6 +5,7 @@ import { IAuthRequest } from '@auth/interfaces';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { SubdomainExistsDto } from './dto/subdomain-exists.dto';
+import { IRelatedRestaurant } from './interfaces/related-restaurant.interface';
 import { Restaurant } from './restaurants.model';
 import { RestaurantsService } from './restaurants.service';
 
@@ -24,7 +25,7 @@ export class RestaurantsController {
   }
 
   @Get()
-  public async getMyRestaurants(@Req() request: IAuthRequest): Promise<Restaurant[]> {
-    return this._restaurantsService.getMyRestaurants(request.user.idUser);
+  public async getRelatedRestaurants(@Req() request: IAuthRequest): Promise<IRelatedRestaurant[]> {
+    return this._restaurantsService.getRelatedRestaurants(request.user.idUser);
   }
 }
