@@ -1,9 +1,8 @@
-export interface IRelatedRestaurant {
-  id: string;
-  name: string;
-  subdomain: string;
-  roles: {
-    name: string;
-    value: string;
-  }[];
+import { Role } from '../../roles/roles.model';
+import { Restaurant } from '../restaurants.model';
+
+export interface IRelatedRestaurant extends Pick<Restaurant, 'id' | 'name' | 'subdomain'> {
+  roles: TRelatedRestaurantRole[];
 }
+
+export type TRelatedRestaurantRole = Pick<Role, 'name' | 'value'>;

@@ -10,7 +10,7 @@ import { RolesGuard } from '@shared/guards/roles.guard';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { RestaurantIdParameterDto } from './dto/restaurant-id-parameter.dto';
 import { SubdomainParameterDto } from './dto/subdomain-parameter.dto';
-import { IRestaurantDetails } from './interfaces/reataurant-details.interface';
+import { TRestaurantDetails } from './interfaces/reataurant-details.type';
 import { IRelatedRestaurant } from './interfaces/related-restaurant.interface';
 import { Restaurant } from './restaurants.model';
 import { RestaurantsService } from './restaurants.service';
@@ -40,7 +40,7 @@ export class RestaurantsController {
   @Get(':restaurantId')
   public async getRestaurantDetails(
     @Param() { restaurantId }: RestaurantIdParameterDto
-  ): Promise<IRestaurantDetails> {
+  ): Promise<TRestaurantDetails> {
     return this._restaurantsService.getRestaurantDetails(restaurantId);
   }
 
@@ -49,8 +49,8 @@ export class RestaurantsController {
   @Put(':restaurantId')
   public async updateRestaurantDetails(
     @Param('restaurantId') id: string,
-    @Body() data: Partial<Restaurant>
-  ): Promise<Restaurant> {
+    @Body() data: Partial<TRestaurantDetails>
+  ): Promise<TRestaurantDetails> {
     return this._restaurantsService.updateRestaurantDetails(id, data);
   }
 }
