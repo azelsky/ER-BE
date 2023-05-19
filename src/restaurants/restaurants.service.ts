@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 
@@ -54,5 +54,18 @@ export class RestaurantsService {
       attributes: ['id', 'name'],
       where: { id }
     });
+  }
+
+  public async updateRestaurantDetails(id: string, data: Partial<Restaurant>): Promise<Restaurant> {
+    const [rowCount, [updated]] = await this._restaurantRepository.update(data, {
+      where: { id },
+      returning: true
+    });
+
+    if (rowCount === 0) {
+      throw new NotFoundException('Restaurant not found');
+    }
+
+    return updated;
   }
 }

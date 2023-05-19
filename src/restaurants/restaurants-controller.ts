@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 
 import { SkipAuthGuard } from '@auth/decorators';
 import { IAuthRequest } from '@auth/interfaces';
@@ -42,5 +42,15 @@ export class RestaurantsController {
     @Param() { restaurantId }: RestaurantIdParameterDto
   ): Promise<IRestaurantDetails> {
     return this._restaurantsService.getRestaurantDetails(restaurantId);
+  }
+
+  @RolesAllowed(Roles.Admin)
+  @UseGuards(RolesGuard)
+  @Put(':restaurantId')
+  public async updateRestaurantDetails(
+    @Param('restaurantId') id: string,
+    @Body() data: Partial<Restaurant>
+  ): Promise<Restaurant> {
+    return this._restaurantsService.updateRestaurantDetails(id, data);
   }
 }
