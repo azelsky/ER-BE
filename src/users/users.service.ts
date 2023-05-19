@@ -11,7 +11,6 @@ import { User } from './users.model';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
 import { Restaurant } from '../restaurants/restaurants.model';
 import { RestaurantsService } from '../restaurants/restaurants.service';
-import { Role } from '../roles/roles.model';
 import { RolesService } from '../roles/roles.service';
 
 @Injectable()
@@ -80,26 +79,5 @@ export class UsersService {
       where: { cognitoId },
       attributes: { exclude: ['cognitoId', 'createdAt', 'updatedAt'] }
     });
-  }
-
-  public getUserRolesForRestaurant(cognitoId: string, restaurantId: string): Promise<Array<Roles>> {
-    return this._userRepository
-      .findOne({
-        where: { cognitoId },
-        include: [
-          {
-            model: Role,
-            attributes: ['value'],
-            through: { attributes: [], where: { restaurantId } }
-          }
-        ]
-      })
-      .then(user => {
-        if (!user) {
-          return [];
-        } else {
-          return user.roles.map(role => role.value);
-        }
-      });
   }
 }

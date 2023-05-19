@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
+import { IRestaurantDetails } from './interfaces/reataurant-details.interface';
 import { IRelatedRestaurant } from './interfaces/related-restaurant.interface';
 import { Restaurant } from './restaurants.model';
 import { Role } from '../roles/roles.model';
@@ -31,7 +32,7 @@ export class RestaurantsService {
   }
 
   public async getRelatedRestaurants(cognitoId: string): Promise<IRelatedRestaurant[]> {
-    return await this._restaurantRepository.findAll<Restaurant>({
+    return this._restaurantRepository.findAll<Restaurant>({
       include: [
         {
           model: User,
@@ -45,6 +46,13 @@ export class RestaurantsService {
         }
       ],
       attributes: ['id', 'name', 'subdomain']
+    });
+  }
+
+  public getRestaurantDetails(id: string): Promise<IRestaurantDetails> {
+    return this._restaurantRepository.findOne({
+      attributes: ['id', 'name'],
+      where: { id }
     });
   }
 }
