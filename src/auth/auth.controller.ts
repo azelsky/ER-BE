@@ -1,22 +1,22 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
+import { AuthService } from './auth.service';
 import { SkipAuthGuard } from './decorators';
 import { AuthRegisterDto, RegisterResponseDto, AuthLoginUserDto } from './dto';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
-import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly _awsCognitoService: AwsCognitoService,
-    private readonly _usersService: UsersService
+    private readonly _authService: AuthService
   ) {}
 
   @SkipAuthGuard()
   @Post('/register')
   public async register(@Body() authRegisterDto: AuthRegisterDto): Promise<RegisterResponseDto> {
-    await this._usersService.createUserWithRestaurant(authRegisterDto);
+    await this._authService.createUserWithRestaurant(authRegisterDto);
     return { success: true };
   }
 
