@@ -1,6 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateOptions } from 'sequelize/types/model';
+import { Sequelize } from 'sequelize-typescript';
+
+import { Roles } from '@shared/constants';
 
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { TRestaurantDetails } from './interfaces/reataurant-details.type';
@@ -12,11 +15,18 @@ import {
 } from './restaurants.constants';
 import { Restaurant } from './restaurants.model';
 import { Role } from '../roles/roles.model';
+import { RolesService } from '../roles/roles.service';
 import { User } from '../users/users.model';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class RestaurantsService {
-  constructor(@InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant) {}
+  constructor(
+    @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
+    private readonly _sequelize: Sequelize,
+    private readonly _usersService: UsersService,
+    private readonly _rolesService: RolesService
+  ) {}
 
   public async create(
     restaurant: CreateRestaurantDto,
@@ -74,5 +84,37 @@ export class RestaurantsService {
     }
 
     return await this.getRestaurantDetails(id);
+  }
+
+  public async createRestaurantForUser(
+    cognitoId: string,
+    dto: CreateRestaurantDto
+  ): Promise<TRestaurantDetails> {
+    const transaction = await this._sequelize.transaction();
+
+    try {
+      const user = await this._usersService.getUserByCognitoId(cognitoId);
+
+      const restaurant = await this.create(dto, { transaction });
+
+      const ownerRole = await this._rolesService.getRoleByValue(Roles.Owner);
+
+      await user.$add('restaurants', restaurant, { transaction });
+      await restaurant.$add('roles', ownerRole, {
+        through: { userId: user.id },
+        transaction
+      });
+
+      await transaction.commit();
+
+      return await this.getRestaurantDetails(restaurant.id);
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
+
+  public delete(id: string): Promise<number> {
+    return this._restaurantRepository.destroy({ where: { id } });
   }
 }
