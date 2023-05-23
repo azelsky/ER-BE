@@ -5,19 +5,19 @@ import { Sequelize } from 'sequelize-typescript';
 
 import { Roles } from '@shared/constants';
 
-import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { TRestaurantDetails } from './interfaces/reataurant-details.type';
-import { IRelatedRestaurant } from './interfaces/related-restaurant.interface';
+import { Role } from '../../roles/roles.model';
+import { RolesService } from '../../roles/roles.service';
+import { User } from '../../users/users.model';
+import { UsersService } from '../../users/users.service';
+import { CreateRestaurantDto } from '../dto/create-restaurant.dto';
+import { TRestaurantDetails } from '../interfaces/reataurant-details.type';
+import { IRelatedRestaurant } from '../interfaces/related-restaurant.interface';
 import {
   RELATED_RESTAURANT_FIELDS,
   RELATED_RESTAURANT_ROLE_FIELDS,
   RESTAURANT_DETAILS_FIELDS
-} from './restaurants.constants';
-import { Restaurant } from './restaurants.model';
-import { Role } from '../roles/roles.model';
-import { RolesService } from '../roles/roles.service';
-import { User } from '../users/users.model';
-import { UsersService } from '../users/users.service';
+} from '../restaurants.constants';
+import { Restaurant } from '../restaurants.model';
 
 @Injectable()
 export class RestaurantsService {

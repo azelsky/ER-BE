@@ -8,12 +8,12 @@ import { RolesAllowed } from '@shared/decorators/roles-allowed.decorator';
 import { RolesGuard } from '@shared/guards/roles.guard';
 import { IDeletedEntity } from '@shared/interfaces';
 
-import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { RestaurantIdParameterDto } from './dto/restaurant-id-parameter.dto';
-import { SubdomainParameterDto } from './dto/subdomain-parameter.dto';
-import { TRestaurantDetails } from './interfaces/reataurant-details.type';
-import { IRelatedRestaurant } from './interfaces/related-restaurant.interface';
-import { RestaurantsService } from './restaurants.service';
+import { CreateRestaurantDto } from '../dto/create-restaurant.dto';
+import { RestaurantIdParameterDto } from '../dto/restaurant-id-parameter.dto';
+import { SubdomainParameterDto } from '../dto/subdomain-parameter.dto';
+import { TRestaurantDetails } from '../interfaces/reataurant-details.type';
+import { IRelatedRestaurant } from '../interfaces/related-restaurant.interface';
+import { RestaurantsService } from '../services/restaurants.service';
 
 @Controller('restaurants')
 export class RestaurantsController {

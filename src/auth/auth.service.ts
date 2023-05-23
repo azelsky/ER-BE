@@ -6,7 +6,7 @@ import { AuthRegisterDto } from '@auth/dto';
 import { Roles } from '@shared/constants';
 
 import { AwsCognitoService } from '../aws-cognito/services/aws-cognito.service';
-import { RestaurantsService } from '../restaurants/restaurants.service';
+import { RestaurantsService } from '../restaurants/services/restaurants.service';
 import { RolesService } from '../roles/roles.service';
 import { UsersService } from '../users/users.service';
 
