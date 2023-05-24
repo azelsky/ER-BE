@@ -12,11 +12,7 @@ import { UsersService } from '../../users/users.service';
 import { CreateRestaurantDto } from '../dto/create-restaurant.dto';
 import { TRestaurantDetails } from '../interfaces/reataurant-details.type';
 import { IRelatedRestaurant } from '../interfaces/related-restaurant.interface';
-import {
-  RELATED_RESTAURANT_FIELDS,
-  RELATED_RESTAURANT_ROLE_FIELDS,
-  RESTAURANT_DETAILS_FIELDS
-} from '../restaurants.constants';
+import { RELATED_RESTAURANT_FIELDS, RESTAURANT_DETAILS_FIELDS } from '../restaurants.constants';
 import { Restaurant } from '../restaurants.model';
 
 @Injectable()
@@ -47,6 +43,7 @@ export class RestaurantsService {
   }
 
   public async getRelatedRestaurants(cognitoId: string): Promise<IRelatedRestaurant[]> {
+    const roleAttributes: (keyof Role)[] = ['name', 'value', 'id'];
     return this._restaurantRepository.findAll<Restaurant>({
       include: [
         {
@@ -57,7 +54,7 @@ export class RestaurantsService {
         {
           model: Role,
           through: { attributes: [] },
-          attributes: [...RELATED_RESTAURANT_ROLE_FIELDS]
+          attributes: roleAttributes
         }
       ],
       attributes: [...RELATED_RESTAURANT_FIELDS]

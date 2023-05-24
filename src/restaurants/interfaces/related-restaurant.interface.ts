@@ -5,4 +5,4 @@ export interface IRelatedRestaurant extends Pick<Restaurant, 'id' | 'name' | 'su
   roles: TRelatedRestaurantRole[];
 }
 
-export type TRelatedRestaurantRole = Pick<Role, 'name' | 'value'>;
+export type TRelatedRestaurantRole = Pick<Role, 'name' | 'value' | 'id'>;

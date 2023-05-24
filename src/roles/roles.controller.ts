@@ -3,9 +3,10 @@ import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/c
 import { Roles } from '@shared/constants';
 
 import { CreateRoleDto } from './dto/create-role.dto';
+import { Role } from './roles.model';
 import { RolesService } from './roles.service';
 
-@Controller('role')
+@Controller('roles')
 export class RolesController {
   constructor(private _rolesService: RolesService) {}
 
@@ -23,5 +24,10 @@ export class RolesController {
     }
 
     return role;
+  }
+
+  @Get()
+  public async getRoles(): Promise<Role[]> {
+    return this._rolesService.getRoles();
   }
 }

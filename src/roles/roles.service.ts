@@ -22,4 +22,8 @@ export class RolesService {
 
     return role;
   }
+
+  public async getRoles(): Promise<Role[]> {
+    return this._roleRepository.findAll();
+  }
 }
