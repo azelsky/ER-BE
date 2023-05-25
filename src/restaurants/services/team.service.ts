@@ -71,4 +71,14 @@ export class TeamService {
       throw error;
     }
   }
+
+  public async addRoleToTeamMember(
+    userId: string,
+    roleId: number,
+    restaurantId: string
+  ): Promise<IStatusResponse> {
+    await this._userRoleRepository.create({ userId, roleId, restaurantId });
+
+    return { success: true, message: 'Role added successfully' };
+  }
 }
