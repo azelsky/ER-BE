@@ -7,13 +7,19 @@ import { Restaurant } from './restaurants.model';
 import { RestaurantsService } from './services/restaurants.service';
 import { TeamService } from './services/team.service';
 import { RolesModule } from '../roles/roles.module';
+import { UserRestaurant } from '../user-restaurant/user-restaurant.model';
+import { UserRole } from '../user-role/user-role.model';
 import { User } from '../users/users.model';
 import { UsersModule } from '../users/users.module';
 
 @Module({
   controllers: [RestaurantsController, TeamController],
   providers: [RestaurantsService, TeamService],
-  imports: [SequelizeModule.forFeature([Restaurant, User]), UsersModule, RolesModule],
+  imports: [
+    SequelizeModule.forFeature([Restaurant, User, UserRole, UserRestaurant]),
+    UsersModule,
+    RolesModule
+  ],
   exports: [RestaurantsService]
 })
 export class RestaurantsModule {}

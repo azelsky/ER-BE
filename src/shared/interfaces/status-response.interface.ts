@@ -1,4 +1,4 @@
-export interface ISendResponse {
+export interface IStatusResponse {
   success: boolean;
   message: string;
 }

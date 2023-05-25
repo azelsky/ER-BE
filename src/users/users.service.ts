@@ -27,4 +27,11 @@ export class UsersService {
       attributes: { exclude: ['cognitoId', 'createdAt', 'updatedAt'] }
     });
   }
+
+  public getUserByEmail(email: string): Promise<User | null> {
+    return this._userRepository.findOne({
+      where: { email },
+      attributes: { exclude: ['cognitoId', 'createdAt', 'updatedAt'] }
+    });
+  }
 }

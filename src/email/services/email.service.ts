@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
 
+import { IStatusResponse } from '@shared/interfaces';
+
 import { FROM } from '../email.constants';
 import { ISendParams } from '../models/send-params.interface';
-import { ISendResponse } from '../models/send-response.interface';
 
 @Injectable()
 export class EmailService {
@@ -12,7 +13,7 @@ export class EmailService {
     SendGrid.setApiKey(this.configService.get<string>('SENDGRID_API_KEY'));
   }
 
-  public async send(params: ISendParams): Promise<ISendResponse> {
+  public async send(params: ISendParams): Promise<IStatusResponse> {
     try {
       const mailData: SendGrid.MailDataRequired = {
         ...params,

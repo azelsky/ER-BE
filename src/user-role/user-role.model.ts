@@ -6,7 +6,7 @@ import { Role } from '../roles/roles.model';
 import { User } from '../users/users.model';
 
 interface UserRoleCreationAttr {
-  roleId: string;
+  roleId: number;
   userId: string;
   restaurantId: string;
 }
