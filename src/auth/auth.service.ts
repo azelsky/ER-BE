@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 
 import { AuthRegisterDto } from '@auth/dto';
@@ -20,6 +20,18 @@ export class AuthService {
     private readonly _usersService: UsersService
   ) {}
 
+  public async completeRegistration(email: string, name: string, password: string): Promise<void> {
+    const user = await this._usersService.getUserByEmail(email);
+
+    if (user.cognitoId) {
+      throw new ConflictException('User id already confirmed');
+    }
+
+    const cognitoUserId = await this._awsCognitoService.registerUser(email, name, password);
+
+    await this._usersService.update(user.id, { name, cognitoId: cognitoUserId });
+  }
+
   public async createUserWithRestaurant(authRegisterDto: AuthRegisterDto): Promise<void> {
     const transaction = await this._sequelize.transaction();
 
@@ -33,14 +45,14 @@ export class AuthService {
         },
         { transaction }
       );
-
-      const cognitoUserId = await this._awsCognitoService.registerUser(authRegisterDto);
+      const { name, email, password } = authRegisterDto;
+      const cognitoUserId = await this._awsCognitoService.registerUser(email, name, password);
 
       const user = await this._usersService.createUser(
         {
           cognitoId: cognitoUserId,
-          name: authRegisterDto.name,
-          email: authRegisterDto.email
+          name,
+          email
         },
         { transaction }
       );

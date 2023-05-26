@@ -1,3 +1,5 @@
+import * as querystring from 'querystring';
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
@@ -6,6 +8,7 @@ import { Role } from 'src/roles/roles.model';
 
 import { IStatusResponse } from '@shared/interfaces';
 
+import { EmailService } from '../../email/services/email.service';
 import { UserRestaurant } from '../../user-restaurant/user-restaurant.model';
 import { UserRole } from '../../user-role/user-role.model';
 import { User } from '../../users/users.model';
@@ -19,7 +22,8 @@ export class TeamService {
     @InjectModel(UserRole) private readonly _userRoleRepository: typeof UserRole,
     @InjectModel(UserRestaurant) private readonly _userRestaurantRepository: typeof UserRestaurant,
     private readonly _usersService: UsersService,
-    private readonly _sequelize: Sequelize
+    private readonly _sequelize: Sequelize,
+    private readonly _emailService: EmailService
   ) {}
 
   public getTeam(restaurantId: string): Promise<TTeamMember[]> {
@@ -45,23 +49,40 @@ export class TeamService {
     const transaction = await this._sequelize.transaction();
 
     try {
-      const user = await this._usersService.getUserByEmail(userEmail);
+      let user = await this._usersService.getUserByEmail(userEmail);
 
-      if (user) {
-        const userRoles = rolesIds.map((id: number) => ({
-          restaurantId,
-          userId: user.id,
-          roleId: id
-        }));
-        await this._userRoleRepository.bulkCreate(userRoles, { transaction });
-        await this._userRestaurantRepository.create(
-          {
-            userId: user.id,
-            restaurantId: restaurantId
-          },
+      if (!user) {
+        user = await this._usersService.createUser(
+          { email: userEmail, name: '', cognitoId: '' },
           { transaction }
         );
+
+        const encodedEmail = querystring.escape(userEmail);
+
+        await this._emailService.send({
+          subject: 'Complete Registration',
+          to: userEmail,
+          html: `
+            <h2>Complete Registration</h2>
+            <p>To complete your registration, please click the following link:</p>
+            <p><a href="http://localhost:5000/complete-registration?email=${encodedEmail}">Complete Registration</a></p>
+          `
+        });
       }
+
+      const userRoles = rolesIds.map((id: number) => ({
+        restaurantId,
+        userId: user.id,
+        roleId: id
+      }));
+      await this._userRoleRepository.bulkCreate(userRoles, { transaction });
+      await this._userRestaurantRepository.create(
+        {
+          userId: user.id,
+          restaurantId: restaurantId
+        },
+        { transaction }
+      );
 
       await transaction.commit();
 

@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class UsersService {
     return await this._userRepository.findOne({ where: { email } }).then(user => !!user);
   }
 
-  public createUser(dto: CreateUserDto, options: CreateOptions = {}): Promise<User> {
+  public createUser(dto: Partial<User>, options: CreateOptions = {}): Promise<User> {
     return this._userRepository.create(dto, options);
   }
 
@@ -33,5 +32,15 @@ export class UsersService {
       where: { email },
       attributes: { exclude: ['cognitoId', 'createdAt', 'updatedAt'] }
     });
+  }
+
+  public async update(id: string, data: Partial<User>): Promise<User> {
+    const [rowCount] = await this._userRepository.update(data, { where: { id } });
+
+    if (rowCount === 0) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.getUser(id);
   }
 }

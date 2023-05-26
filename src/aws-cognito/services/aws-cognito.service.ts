@@ -6,9 +6,8 @@ import {
   CognitoUserPool
 } from 'amazon-cognito-identity-js';
 
-import { AuthLoginUserDto } from '../../auth/dto/auth-login-user.dto';
-import { AuthRegisterDto } from '../../auth/dto/auth-register.dto';
-import { AuthResponse } from '../../auth/interfaces/auth-response.interface';
+import { AuthLoginUserDto } from '@auth/dto';
+import { AuthResponse } from '@auth/interfaces';
 
 @Injectable()
 export class AwsCognitoService {
@@ -17,9 +16,7 @@ export class AwsCognitoService {
     ClientId: process.env.AWS_COGNITO_CLIENT_ID
   });
 
-  public async registerUser(authRegisterUserDto: AuthRegisterDto): Promise<string> {
-    const { name, email, password } = authRegisterUserDto;
-
+  public async registerUser(email: string, name: string, password: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this._userPool.signUp(
         email,

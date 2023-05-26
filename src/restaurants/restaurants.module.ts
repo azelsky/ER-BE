@@ -6,6 +6,7 @@ import { TeamController } from './controllers/team.controller';
 import { Restaurant } from './restaurants.model';
 import { RestaurantsService } from './services/restaurants.service';
 import { TeamService } from './services/team.service';
+import { EmailModule } from '../email/email.module';
 import { RolesModule } from '../roles/roles.module';
 import { UserRestaurant } from '../user-restaurant/user-restaurant.model';
 import { UserRole } from '../user-role/user-role.model';
@@ -18,7 +19,8 @@ import { UsersModule } from '../users/users.module';
   imports: [
     SequelizeModule.forFeature([Restaurant, User, UserRole, UserRestaurant]),
     UsersModule,
-    RolesModule
+    RolesModule,
+    EmailModule
   ],
   exports: [RestaurantsService]
 })
