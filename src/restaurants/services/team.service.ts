@@ -72,7 +72,7 @@ export class TeamService {
     }
   }
 
-  public async addRoleToTeamMember(
+  public async addRoleToMember(
     userId: string,
     roleId: number,
     restaurantId: string
@@ -80,5 +80,36 @@ export class TeamService {
     await this._userRoleRepository.create({ userId, roleId, restaurantId });
 
     return { success: true, message: 'Role added successfully' };
+  }
+
+  public async deleteMemberRole(
+    userId: string,
+    roleId: number,
+    restaurantId: string
+  ): Promise<IStatusResponse> {
+    const transaction = await this._sequelize.transaction();
+
+    try {
+      await this._userRoleRepository.destroy({ where: { userId, roleId, restaurantId } });
+
+      const userRoles = await this._userRoleRepository.findAll({
+        where: { userId, restaurantId },
+        transaction
+      });
+
+      if (!userRoles.length) {
+        await this._userRestaurantRepository.destroy({
+          where: { userId, restaurantId },
+          transaction
+        });
+      }
+
+      await transaction.commit();
+
+      return { success: true, message: 'Role deleted successfully' };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 }

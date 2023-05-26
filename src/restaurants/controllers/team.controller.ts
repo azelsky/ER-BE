@@ -5,8 +5,8 @@ import { RolesAllowed } from '@shared/decorators/roles-allowed.decorator';
 import { RolesGuard } from '@shared/guards/roles.guard';
 import { IStatusResponse } from '@shared/interfaces';
 
-import { AddRoleToTeamMemberDto } from '../dto/add-role-to-team-member.dto';
 import { AddTeamMemberDto } from '../dto/add-team-member.dto';
+import { UserRoleDto } from '../dto/user-role.dto';
 import { TTeamMember } from '../interfaces/team-member';
 import { TeamService } from '../services/team.service';
 
@@ -38,10 +38,20 @@ export class TeamController {
   @RolesAllowed(Roles.Admin)
   @UseGuards(RolesGuard)
   @Post('member/add-role')
-  public addRoleToTeamMember(
-    @Body() body: AddRoleToTeamMemberDto,
+  public addRoleToMember(
+    @Body() body: UserRoleDto,
     @Param('restaurantId') restaurantId: string
   ): Promise<IStatusResponse> {
-    return this._teamService.addRoleToTeamMember(body.userId, body.roleId, restaurantId);
+    return this._teamService.addRoleToMember(body.userId, body.roleId, restaurantId);
+  }
+
+  @RolesAllowed(Roles.Admin)
+  @UseGuards(RolesGuard)
+  @Post('member/delete-role')
+  public deleteMemberRole(
+    @Body() body: UserRoleDto,
+    @Param('restaurantId') restaurantId: string
+  ): Promise<IStatusResponse> {
+    return this._teamService.deleteMemberRole(body.userId, body.roleId, restaurantId);
   }
 }

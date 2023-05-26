@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
-import { RestaurantsController } from './controllers/restaurants-controller';
-import { TeamController } from './controllers/team-controller';
+import { RestaurantsController } from './controllers/restaurants.controller';
+import { TeamController } from './controllers/team.controller';
 import { Restaurant } from './restaurants.model';
 import { RestaurantsService } from './services/restaurants.service';
 import { TeamService } from './services/team.service';
