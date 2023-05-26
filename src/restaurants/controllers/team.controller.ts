@@ -30,7 +30,7 @@ export class TeamController {
   ): Promise<IStatusResponse> {
     return this._teamService.addTeamMember(
       addTeamMemberDto.email,
-      addTeamMemberDto.roles,
+      addTeamMemberDto.rolesIds,
       restaurantId
     );
   }

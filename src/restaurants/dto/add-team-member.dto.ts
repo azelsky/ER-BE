@@ -6,5 +6,5 @@ export class AddTeamMemberDto {
 
   @IsArray()
   @ArrayMinSize(1, { message: 'At least one role is required' })
-  roles: number[];
+  rolesIds: number[];
 }
