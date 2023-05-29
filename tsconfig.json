@@ -21,8 +21,14 @@
       "@shared/*": [
         "src/shared/*"
       ],
-      "@auth/*": [
-        "src/auth/*"
+      "@core/*": [
+        "src/core/*"
+      ],
+      "@features/*": [
+        "src/features/*"
+      ],
+      "@relations/*": [
+        "src/relations/*"
       ]
     }
   }

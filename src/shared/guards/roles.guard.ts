@@ -2,8 +2,9 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { Role } from '../../roles/roles.model';
-import { User } from '../../users/users.model';
+import { Role } from '@features/roles';
+import { User } from '@features/users';
+
 import { Roles, ROLES_ALLOWED_KEY } from '../constants';
 
 @Injectable()

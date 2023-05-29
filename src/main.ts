@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 
-import { AuthGuard } from '@auth/guards';
+import { AuthGuard } from '@core/auth/guards';
 
 import { AppModule } from './app.module';
 

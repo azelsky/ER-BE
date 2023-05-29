@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { AuthModule } from '@core/auth/auth.module';
+import { DatabaseModule } from '@core/database/database.module';
+
+import { RestaurantsModule } from '@features/restaurants';
+import { RolesModule } from '@features/roles';
+import { UsersModule } from '@features/users';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { DatabaseModule } from './database/database.module';
-import { RestaurantsModule } from './restaurants/restaurants.module';
-import { RolesModule } from './roles/roles.module';
-import { UserRestaurantModule } from './user-restaurant/user-restaurant.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   controllers: [AppController],
@@ -21,7 +22,6 @@ import { UsersModule } from './users/users.module';
       envFilePath: `.${process.env.NODE_ENV}.env`
     }),
     DatabaseModule,
-    UserRestaurantModule,
     AuthModule
   ]
 })

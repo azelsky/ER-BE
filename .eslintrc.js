@@ -29,7 +29,17 @@ module.exports = {
         groups: ['builtin', 'external', 'internal', ['sibling', 'parent']],
         pathGroups: [
           {
-            pattern: '@auth/**',
+            pattern: '@core/**',
+            group: 'internal',
+            position: 'after'
+          },
+          {
+            pattern: '@features/**',
+            group: 'internal',
+            position: 'after'
+          },
+          {
+            pattern: '@relations/**',
             group: 'internal',
             position: 'after'
           },
