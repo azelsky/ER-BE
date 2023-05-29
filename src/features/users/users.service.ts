@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { CreateOptions } from 'sequelize/types/model';
+
+import { Role } from '@features/roles';
+
+import { Roles } from '@shared/constants';
 
 import { User } from './users.model';
 
@@ -42,5 +47,39 @@ export class UsersService {
     }
 
     return this.getUser(id);
+  }
+
+  public getRestaurantUsers(restaurantId: string, attributes: (keyof User)[]): Promise<User[]> {
+    return this._userRepository.findAll({
+      attributes: attributes,
+      include: [
+        {
+          model: Role,
+          through: { where: { restaurantId }, attributes: [] }
+        }
+      ],
+      where: { '$roles.id$': { [Op.ne]: null } }
+    });
+  }
+
+  public getUserRolesForRestaurant(cognitoId: string, restaurantId: string): Promise<Array<Roles>> {
+    return this._userRepository
+      .findOne({
+        where: { cognitoId },
+        include: [
+          {
+            model: Role,
+            attributes: ['value'],
+            through: { attributes: [], where: { restaurantId } }
+          }
+        ]
+      })
+      .then(user => {
+        if (!user) {
+          return [];
+        } else {
+          return user.roles.map(role => role.value);
+        }
+      });
   }
 }

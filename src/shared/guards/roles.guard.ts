@@ -1,9 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { InjectModel } from '@nestjs/sequelize';
 
-import { Role } from '@features/roles';
-import { User } from '@features/users';
+import { UsersService } from '@features/users';
 
 import { Roles, ROLES_ALLOWED_KEY } from '../constants';
 
@@ -11,7 +9,7 @@ import { Roles, ROLES_ALLOWED_KEY } from '../constants';
 export class RolesGuard implements CanActivate {
   constructor(
     private readonly _reflector: Reflector,
-    @InjectModel(User) private _userRepository: typeof User
+    private readonly _usersService: UsersService
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -25,7 +23,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const roles = await this._getUserRolesForRestaurant(
+    const roles = await this._usersService.getUserRolesForRestaurant(
       request.user.idUser,
       request.params.restaurantId
     );
@@ -37,29 +35,5 @@ export class RolesGuard implements CanActivate {
     if (roles.includes(Roles.Owner)) return true;
 
     return roles.some(role => requireRoles.includes(role));
-  }
-
-  private _getUserRolesForRestaurant(
-    cognitoId: string,
-    restaurantId: string
-  ): Promise<Array<Roles>> {
-    return this._userRepository
-      .findOne({
-        where: { cognitoId },
-        include: [
-          {
-            model: Role,
-            attributes: ['value'],
-            through: { attributes: [], where: { restaurantId } }
-          }
-        ]
-      })
-      .then(user => {
-        if (!user) {
-          return [];
-        } else {
-          return user.roles.map(role => role.value);
-        }
-      });
   }
 }

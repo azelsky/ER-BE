@@ -2,11 +2,9 @@ import * as querystring from 'querystring';
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 
-import { Role } from '@features/roles';
-import { UsersService, User } from '@features/users';
+import { UsersService } from '@features/users';
 
 import { UserRestaurant } from '@relations/user-restaurant';
 import { UserRole } from '@relations/user-role';
@@ -19,7 +17,6 @@ import { TTeamMember } from '../interfaces';
 @Injectable()
 export class TeamService {
   constructor(
-    @InjectModel(User) private readonly _userRepository: typeof User,
     @InjectModel(UserRole) private readonly _userRoleRepository: typeof UserRole,
     @InjectModel(UserRestaurant) private readonly _userRestaurantRepository: typeof UserRestaurant,
     private readonly _usersService: UsersService,
@@ -30,16 +27,7 @@ export class TeamService {
   public getTeam(restaurantId: string): Promise<TTeamMember[]> {
     const teamMemberAttributes: (keyof TTeamMember)[] = ['id', 'name', 'email'];
 
-    return this._userRepository.findAll({
-      attributes: teamMemberAttributes,
-      include: [
-        {
-          model: Role,
-          through: { where: { restaurantId }, attributes: [] }
-        }
-      ],
-      where: { '$roles.id$': { [Op.ne]: null } }
-    });
+    return this._usersService.getRestaurantUsers(restaurantId, teamMemberAttributes);
   }
 
   public async addTeamMember(

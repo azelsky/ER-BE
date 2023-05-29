@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { RolesModule } from '@features/roles';
-import { User } from '@features/users';
 import { UsersModule } from '@features/users';
 
 import { UserRestaurant } from '@relations/user-restaurant';
@@ -19,7 +18,7 @@ import { TeamController, TeamService } from './team';
   controllers: [RestaurantsController, TeamController],
   providers: [RestaurantsService, TeamService],
   imports: [
-    SequelizeModule.forFeature([Restaurant, User, UserRole, UserRestaurant]),
+    SequelizeModule.forFeature([Restaurant, UserRole, UserRestaurant]),
     UsersModule,
     RolesModule,
     EmailModule
