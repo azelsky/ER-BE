@@ -33,6 +33,7 @@
     "class-validator": "^0.14.0",
     "cross-env": "^7.0.3",
     "eslint-plugin-import": "^2.27.5",
+    "firebase-admin": "^11.8.0",
     "jwks-rsa": "^3.0.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
