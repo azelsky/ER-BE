@@ -7,4 +7,4 @@ package-lock.json
 .production.env
 .development.env
 
-src/ermessaging-firebase-adminsdk-ntptg-18d4f97d24.json
+src/shared/modules/notifications/ermessaging-firebase-adminsdk-ntptg-18d4f97d24.json

@@ -1,11 +1,13 @@
 import { UUIDV4 } from 'sequelize';
-import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 
 import { Role } from '@features/roles';
 import { User } from '@features/users';
 
 import { UserRestaurant } from '@relations/user-restaurant';
 import { UserRole } from '@relations/user-role';
+
+import { RTable } from './tables';
 
 interface RestaurantCreationAttr {
   name: string;
@@ -32,4 +34,7 @@ export class Restaurant extends Model<Restaurant, RestaurantCreationAttr> {
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];
+
+  @HasMany(() => RTable)
+  tables: RTable[];
 }
