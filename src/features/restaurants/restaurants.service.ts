@@ -71,6 +71,19 @@ export class RestaurantsService {
     });
   }
 
+  public async getRestaurantDetailsBySubdomain(subdomain: string): Promise<TRestaurantDetails> {
+    const restaurant = await this._restaurantRepository.findOne({
+      attributes: [...RESTAURANT_DETAILS_FIELDS],
+      where: { subdomain }
+    });
+
+    if (!restaurant) {
+      throw new NotFoundException('Restaurant not found');
+    }
+
+    return restaurant;
+  }
+
   public async updateRestaurantDetails(
     id: string,
     data: Partial<TRestaurantDetails>

@@ -44,6 +44,14 @@ export class RestaurantsController {
     return this._restaurantsService.getRestaurantDetails(restaurantId);
   }
 
+  @SkipAuthGuard()
+  @Get('subdomain/:subdomain')
+  public async getRestaurantDetailsBySubdomain(
+    @Param('subdomain') subdomain: string
+  ): Promise<TRestaurantDetails> {
+    return this._restaurantsService.getRestaurantDetailsBySubdomain(subdomain);
+  }
+
   @RolesAllowed(Roles.Admin)
   @UseGuards(RolesGuard)
   @Put(':restaurantId')

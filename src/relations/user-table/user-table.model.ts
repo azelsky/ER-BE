@@ -13,6 +13,7 @@ export class UserTable
   extends Model<UserTable, UserTableCreationAttr>
   implements UserTableCreationAttr
 {
+  // toDo add id uuid
   @ForeignKey(() => RTable)
   @Column({ type: DataType.UUID })
   tableId: string;
