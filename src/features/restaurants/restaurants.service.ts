@@ -3,8 +3,10 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 import { Sequelize } from 'sequelize-typescript';
 
-import { Role, RolesService } from '@features/roles';
-import { UsersService, User } from '@features/users';
+import { Role } from '@features/roles/roles.model';
+import { RolesService } from '@features/roles/roles.service';
+import { User } from '@features/users/users.model';
+import { UsersService } from '@features/users/users.service';
 
 import { Roles } from '@shared/constants';
 

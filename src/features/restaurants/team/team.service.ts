@@ -4,10 +4,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 
-import { UsersService } from '@features/users';
+import { UsersService } from '@features/users/users.service';
 
-import { UserRestaurant } from '@relations/user-restaurant';
-import { UserRole } from '@relations/user-role';
+import { UserRestaurant } from '@relations/user-restaurant/user-restaurant.model';
+import { UserRole } from '@relations/user-role/user-role.model';
 
 import { IStatusResponse } from '@shared/interfaces';
 import { EmailService } from '@shared/modules/email';

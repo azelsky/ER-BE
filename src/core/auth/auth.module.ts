@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { RestaurantsModule } from '@features/restaurants';
-import { RolesModule } from '@features/roles';
-import { UsersModule } from '@features/users';
+import { RestaurantsModule } from '@features/restaurants/restaurants.module';
+import { RolesModule } from '@features/roles/roles.module';
+import { UsersModule } from '@features/users/users.module';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';

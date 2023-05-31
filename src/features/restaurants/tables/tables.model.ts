@@ -1,10 +1,23 @@
 import { UUIDV4 } from 'sequelize';
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table
+} from 'sequelize-typescript';
+
+import { User } from '@features/users/users.model';
+
+import { UserTable } from '@relations/user-table/user-table.model';
 
 import { Restaurant } from '../restaurants.model';
 
 interface TableAttr {
   name: string;
+  restaurantId: string;
 }
 
 @Table({ tableName: 'tables' })
@@ -25,4 +38,7 @@ export class RTable extends Model<RTable, TableAttr> implements TableAttr {
 
   @BelongsTo(() => Restaurant, { onDelete: 'CASCADE' })
   restaurant: Restaurant;
+
+  @BelongsToMany(() => User, () => UserTable)
+  users: User[];
 }

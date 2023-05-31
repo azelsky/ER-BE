@@ -1,13 +1,13 @@
 import { UUIDV4 } from 'sequelize';
 import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 
-import { Role } from '@features/roles';
-import { User } from '@features/users';
+import { Role } from '@features/roles/roles.model';
+import { User } from '@features/users/users.model';
 
-import { UserRestaurant } from '@relations/user-restaurant';
-import { UserRole } from '@relations/user-role';
+import { UserRestaurant } from '@relations/user-restaurant/user-restaurant.model';
+import { UserRole } from '@relations/user-role/user-role.model';
 
-import { RTable } from './tables';
+import { RTable } from './tables/tables.model';
 
 interface RestaurantCreationAttr {
   name: string;

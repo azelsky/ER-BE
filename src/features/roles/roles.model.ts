@@ -1,9 +1,9 @@
 import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
 
-import { Restaurant } from '@features/restaurants';
-import { User } from '@features/users';
+import { Restaurant } from '@features/restaurants/restaurants.model';
+import { User } from '@features/users/users.model';
 
-import { UserRole } from '@relations/user-role';
+import { UserRole } from '@relations/user-role/user-role.model';
 
 import { Roles } from '@shared/constants';
 

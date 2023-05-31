@@ -1,9 +1,9 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 
-import { RestaurantsService } from '@features/restaurants';
-import { RolesService } from '@features/roles';
-import { UsersService } from '@features/users';
+import { RestaurantsService } from '@features/restaurants/restaurants.service';
+import { RolesService } from '@features/roles/roles.service';
+import { UsersService } from '@features/users/users.service';
 
 import { Roles } from '@shared/constants';
 

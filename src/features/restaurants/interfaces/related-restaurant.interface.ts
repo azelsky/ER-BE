@@ -1,4 +1,4 @@
-import { Role } from '@features/roles';
+import { Role } from '@features/roles/roles.model';
 
 import { Restaurant } from '../restaurants.model';
 

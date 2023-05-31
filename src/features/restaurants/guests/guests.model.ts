@@ -1,10 +1,11 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
-import { RTable } from '../tables';
+import { RTable } from '../tables/tables.model';
 
 interface GuestCreationAttr {
   id: string;
-  name: string;
+  tableId: string;
+  name?: string;
 }
 
 @Table({ tableName: 'guests' })

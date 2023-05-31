@@ -1,7 +1,7 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
-import { RTable } from '@features/restaurants/tables';
-import { User } from '@features/users';
+import { RTable } from '@features/restaurants/tables/tables.model';
+import { User } from '@features/users/users.model';
 
 interface UserTableCreationAttr {
   tableId: string;

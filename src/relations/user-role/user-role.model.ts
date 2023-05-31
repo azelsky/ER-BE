@@ -1,9 +1,9 @@
 import { UUIDV4 } from 'sequelize';
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
-import { Restaurant } from '@features/restaurants';
-import { Role } from '@features/roles';
-import { User } from '@features/users';
+import { Restaurant } from '@features/restaurants/restaurants.model';
+import { Role } from '@features/roles/roles.model';
+import { User } from '@features/users/users.model';
 
 interface UserRoleCreationAttr {
   roleId: number;

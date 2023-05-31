@@ -4,9 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@core/auth/auth.module';
 import { DatabaseModule } from '@core/database/database.module';
 
-import { RestaurantsModule } from '@features/restaurants';
-import { RolesModule } from '@features/roles';
-import { UsersModule } from '@features/users';
+import { RestaurantsModule } from '@features/restaurants/restaurants.module';
+import { RolesModule } from '@features/roles/roles.module';
+import { UsersModule } from '@features/users/users.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
