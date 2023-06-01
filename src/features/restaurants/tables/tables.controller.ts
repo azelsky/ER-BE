@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { CreateTableDto } from '@features/restaurants/tables/dto';
 
@@ -21,5 +21,12 @@ export class TablesController {
     @Body() body: CreateTableDto
   ): Promise<RTable> {
     return this._tablesService.create(restaurantId, body.name);
+  }
+
+  @RolesAllowed(Roles.Admin, Roles.Waiter)
+  @UseGuards(RolesGuard)
+  @Get()
+  public getTables(@Param('restaurantId') restaurantId: string): Promise<RTable[]> {
+    return this._tablesService.getTables(restaurantId);
   }
 }

@@ -14,4 +14,8 @@ export class TablesService {
   public create(restaurantId: string, name: string): Promise<RTable> {
     return this._tableRepository.create({ name, restaurantId });
   }
+
+  public getTables(restaurantId): Promise<RTable[]> {
+    return this._tableRepository.findAll({ where: { restaurantId } });
+  }
 }
