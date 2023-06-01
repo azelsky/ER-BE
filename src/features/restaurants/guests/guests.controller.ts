@@ -7,9 +7,9 @@ import { GuestsService } from '@features/restaurants/guests/guests.service';
 import { IStatusResponse } from '@shared/interfaces';
 import { NotificationsService } from '@shared/modules/notifications';
 
-import { InitGuestDto } from './dto';
+import { CallWaiterDto, InitGuestDto } from './dto';
 
-@Controller('restaurants/:restaurantId/guests')
+@Controller('restaurants/guest')
 export class GuestsController {
   constructor(
     private readonly _notificationsService: NotificationsService,
@@ -18,17 +18,12 @@ export class GuestsController {
 
   @SkipAuthGuard()
   @Post('call-waiter')
-  public async callWaiter(): Promise<string> {
-    const token =
-      'fupv8vvULMemzTXd5_0-vT:APA91bFBXj-woHEhDB4NTcbsGVWUuXnWknceCZoSMccpfbkXOqloYGoz4Djq96aUlJgUUc8z739xGTrrHsRZryP4eF51LeCEcGXtHEV5AaMxxrbaikDScrLUFLUHVKYOTSWq2QVvstTq';
-    return this._notificationsService.sendNotification(token, {
-      title: 'Title',
-      body: 'Some body'
-    });
+  public async callWaiter(@Body() dto: CallWaiterDto): Promise<IStatusResponse> {
+    return this._guestsService.callWaiter(dto.guestId);
   }
 
   @SkipAuthGuard()
-  @Post('join-table')
+  @Post('init')
   public joinTable(@Body() dto: InitGuestDto): Promise<IStatusResponse> {
     return this._guestsService.initGuest(dto.tableId, dto.guestId);
   }

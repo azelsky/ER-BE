@@ -18,12 +18,7 @@ export class Guest extends Model<Guest, GuestCreationAttr> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: ((): string => {
-      const currentDate = new Date();
-      const currentTime = `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-      return `Guest ${currentTime}`;
-    })()
+    allowNull: false
   })
   name: string;
 
