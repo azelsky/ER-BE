@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 
 import { CreateTableDto } from '@features/restaurants/tables/dto';
 
@@ -31,11 +31,18 @@ export class TablesController {
     return this._tablesService.getTables(restaurantId);
   }
 
-  @RolesAllowed(Roles.Admin, Roles.Waiter)
+  @RolesAllowed(Roles.Admin)
   @UseGuards(RolesGuard)
   @Delete(':tableId')
   public async delete(@Param('tableId') id: string): Promise<IDeletedEntity> {
     await this._tablesService.delete(id);
     return { id };
+  }
+
+  @RolesAllowed(Roles.Admin)
+  @UseGuards(RolesGuard)
+  @Put(':tableId')
+  public async edit(@Param('tableId') id: string, @Body() data: Partial<RTable>): Promise<RTable> {
+    return this._tablesService.edit(id, data);
   }
 }
