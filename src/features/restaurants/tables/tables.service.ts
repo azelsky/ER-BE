@@ -15,6 +15,10 @@ export class TablesService {
     return this._tableRepository.create({ name, restaurantId });
   }
 
+  public delete(id: string): Promise<number> {
+    return this._tableRepository.destroy({ where: { id } });
+  }
+
   public getTables(restaurantId): Promise<RTable[]> {
     const excludeTableFields: (keyof RTable)[] = ['createdAt', 'updatedAt'];
     return this._tableRepository.findAll({
