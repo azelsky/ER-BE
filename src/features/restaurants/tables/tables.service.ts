@@ -16,6 +16,10 @@ export class TablesService {
   }
 
   public getTables(restaurantId): Promise<RTable[]> {
-    return this._tableRepository.findAll({ where: { restaurantId } });
+    const excludeTableFields: (keyof RTable)[] = ['createdAt', 'updatedAt'];
+    return this._tableRepository.findAll({
+      where: { restaurantId },
+      attributes: { exclude: excludeTableFields }
+    });
   }
 }

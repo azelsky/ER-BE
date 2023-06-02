@@ -15,7 +15,7 @@ import { UserTable } from '@relations/user-table/user-table.model';
 
 import { Restaurant } from '../restaurants.model';
 
-interface TableAttr {
+export interface TableAttr {
   name: string;
   restaurantId: string;
 }
