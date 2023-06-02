@@ -65,8 +65,11 @@ export class GuestsService {
     payload: INotificationPayload
   ): Promise<void> {
     // toDo check if a waiter at work
-    // toDO if !waiters.length send notification to all waiters
-    const waiters = await this._usersService.getTableWaiters(tableId);
+    let waiters = await this._usersService.getTableWaiters(tableId);
+    if (!waiters.length) {
+      const table = await this._tablesService.getTable(tableId);
+      waiters = await this._usersService.getAllRestaurantWaiters(table.restaurantId);
+    }
     for (const waiter of waiters) {
       for (const device of waiter.devices) {
         await this._notificationsService.sendNotification(device.token, payload);

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 
+import { Restaurant } from '@features/restaurants/restaurants.model';
 import { RTable } from '@features/restaurants/tables/tables.model';
 import { Role } from '@features/roles/roles.model';
 import { Device } from '@features/users/devices/devices.model';
@@ -98,6 +99,21 @@ export class UsersService {
         }
       ],
       where: { '$tables.id$': { [Op.ne]: null } }
+    });
+  }
+
+  public getAllRestaurantWaiters(restaurantId: string): Promise<User[]> {
+    return this._userRepository.findAll({
+      include: [
+        {
+          model: Restaurant,
+          through: { where: { restaurantId: restaurantId } }
+        },
+        {
+          model: Device
+        }
+      ],
+      where: { '$restaurants.id$': { [Op.ne]: null } }
     });
   }
 }
