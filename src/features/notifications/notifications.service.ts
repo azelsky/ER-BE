@@ -1,11 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 
 import { firebaseAdmin } from './firebase-admin.service';
-import { INotificationPayload } from './models';
+import { INotificationData, INotificationPayload, NotificationTypeEnum } from './interfaces';
+import { Notification } from './notification.model';
 
 @Injectable()
 export class NotificationsService {
+  constructor(@InjectModel(Notification) private _notificationRepository: typeof Notification) {}
+
   public async sendNotification(
+    recipientId: string,
+    recipientDeviceIds: string[],
+    type: NotificationTypeEnum,
+    data: INotificationData,
+    notificationPayload: INotificationPayload
+  ): Promise<void> {
+    await this._notificationRepository.create({ type, data, userId: recipientId });
+
+    for (const recipientDeviceId of recipientDeviceIds) {
+      await this._sendPushNotification(recipientDeviceId, notificationPayload);
+    }
+  }
+
+  private async _sendPushNotification(
     deviceToken: string,
     notificationPayload: INotificationPayload
   ): Promise<string> {

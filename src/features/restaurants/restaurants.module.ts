@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
+import { NotificationsModule } from '@features/notifications';
 import { RolesModule } from '@features/roles/roles.module';
 import { UsersModule } from '@features/users/users.module';
 
@@ -9,7 +10,6 @@ import { UserRole } from '@relations/user-role/user-role.model';
 import { UserTableModule } from '@relations/user-table/user-table.module';
 
 import { EmailModule } from '@shared/modules/email/email.module';
-import { NotificationsModule } from '@shared/modules/notifications';
 
 import { GuestsController } from './guests/guests.controller';
 import { Guest } from './guests/guests.model';

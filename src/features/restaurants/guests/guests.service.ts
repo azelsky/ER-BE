@@ -1,11 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
+import { NotificationsService } from '@features/notifications';
+import {
+  INotificationData,
+  INotificationFromGuest,
+  INotificationPayload,
+  NotificationTypeEnum
+} from '@features/notifications/interfaces';
 import { UsersService } from '@features/users/users.service';
 
 import { IStatusResponse } from '@shared/interfaces';
-import { NotificationsService } from '@shared/modules/notifications';
-import { INotificationPayload } from '@shared/modules/notifications/models';
 
 import { Guest } from './guests.model';
 import { TablesService } from '../tables/tables.service';
@@ -25,11 +30,21 @@ export class GuestsService {
 
     const table = await this._tablesService.getTable(guest.tableId);
 
+    // toDO translate
     const notificationPayload = {
       title: 'Request',
-      body: `Come up to ${table.name} table`
+      body: `Come up to ${table.name} table. ${guest.name} call you`
     };
-    await this._sendNotificationsToWaiter(guest.tableId, notificationPayload);
+    const data: INotificationFromGuest = {
+      guestName: guest.name,
+      tableName: table.name
+    };
+    await this._sendNotificationsToWaiters(
+      guest.tableId,
+      NotificationTypeEnum.CallWaiter,
+      data,
+      notificationPayload
+    );
 
     return { success: true };
   }
@@ -47,11 +62,21 @@ export class GuestsService {
     });
     const table = await this._tablesService.getTable(tableId);
 
+    // toDO translate
     const notificationPayload = {
       title: 'New Guest',
       body: `${guest.name} joined table ${table.name}`
     };
-    await this._sendNotificationsToWaiter(tableId, notificationPayload);
+    const data: INotificationFromGuest = {
+      guestName: guest.name,
+      tableName: table.name
+    };
+    await this._sendNotificationsToWaiters(
+      tableId,
+      NotificationTypeEnum.NewGuest,
+      data,
+      notificationPayload
+    );
 
     return { success: true };
   }
@@ -60,8 +85,10 @@ export class GuestsService {
     return this._guestRepository.findOne({ where: { id } });
   }
 
-  private async _sendNotificationsToWaiter(
+  private async _sendNotificationsToWaiters(
     tableId: string,
+    type: NotificationTypeEnum,
+    data: INotificationData,
     payload: INotificationPayload
   ): Promise<void> {
     // toDo check if a waiter at work
@@ -71,9 +98,13 @@ export class GuestsService {
       waiters = await this._usersService.getAllRestaurantWaiters(table.restaurantId);
     }
     for (const waiter of waiters) {
-      for (const device of waiter.devices) {
-        await this._notificationsService.sendNotification(device.token, payload);
-      }
+      await this._notificationsService.sendNotification(
+        waiter.id,
+        waiter.devices.map(device => device.token),
+        type,
+        data,
+        payload
+      );
     }
   }
 

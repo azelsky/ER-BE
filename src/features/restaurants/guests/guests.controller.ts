@@ -2,10 +2,10 @@ import { Body, Controller, Post } from '@nestjs/common';
 
 import { SkipAuthGuard } from '@core/auth/decorators';
 
+import { NotificationsService } from '@features/notifications';
 import { GuestsService } from '@features/restaurants/guests/guests.service';
 
 import { IStatusResponse } from '@shared/interfaces';
-import { NotificationsService } from '@shared/modules/notifications';
 
 import { CallWaiterDto, InitGuestDto } from './dto';
 
