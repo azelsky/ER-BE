@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@core/auth/auth.module';
 import { DatabaseModule } from '@core/database/database.module';
 
+import { NotificationsModule } from '@features/notifications/notifications.module';
 import { RestaurantsModule } from '@features/restaurants/restaurants.module';
 import { RolesModule } from '@features/roles/roles.module';
 import { UsersModule } from '@features/users/users.module';
@@ -18,6 +19,7 @@ import { AppService } from './app.service';
     UsersModule,
     RolesModule,
     RestaurantsModule,
+    NotificationsModule,
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`
     }),

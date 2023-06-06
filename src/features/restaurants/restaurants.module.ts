@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
-import { NotificationsModule } from '@features/notifications';
+import { NotificationsModule } from '@features/notifications/notifications.module';
 import { RolesModule } from '@features/roles/roles.module';
 import { UsersModule } from '@features/users/users.module';
 

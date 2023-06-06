@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { NotificationsService } from '@features/notifications';
 import {
   INotificationData,
   INotificationFromGuest,
   INotificationPayload,
   NotificationTypeEnum
 } from '@features/notifications/interfaces';
+import { NotificationsService } from '@features/notifications/notifications.service';
 import { UsersService } from '@features/users/users.service';
 
 import { IStatusResponse } from '@shared/interfaces';
