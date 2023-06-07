@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 
 import {
   INotificationData,
@@ -8,17 +10,20 @@ import {
   NotificationTypeEnum
 } from '@features/notifications/interfaces';
 import { NotificationsService } from '@features/notifications/notifications.service';
+import { RTable } from '@features/restaurants/tables/tables.model';
 import { UsersService } from '@features/users/users.service';
 
 import { IStatusResponse } from '@shared/interfaces';
 
 import { Guest } from './guests.model';
+import { Restaurant } from '../restaurants.model';
 import { TablesService } from '../tables/tables.service';
 
 @Injectable()
 export class GuestsService {
   constructor(
     @InjectModel(Guest) private _guestRepository: typeof Guest,
+    @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
     private readonly _notificationsService: NotificationsService,
     private readonly _usersService: UsersService,
     private readonly _tablesService: TablesService
@@ -33,7 +38,7 @@ export class GuestsService {
     // toDO translate
     const notificationPayload = {
       title: 'Request',
-      body: `Come up to ${table.name} table. ${guest.name} call you`
+      body: `Come up to ${table.name} table. Guest ${guest.name} call you`
     };
     const data: INotificationFromGuest = {
       guestName: guest.name,
@@ -55,17 +60,18 @@ export class GuestsService {
       return { success: true };
     }
 
+    const guestName = await this._generateGuestName(tableId);
     const guest = await this._guestRepository.create({
       tableId,
       id: guestId,
-      name: this._generateGuestName()
+      name: guestName
     });
     const table = await this._tablesService.getTable(tableId);
 
     // toDO translate
     const notificationPayload = {
       title: 'New Guest',
-      body: `${guest.name} joined table ${table.name}`
+      body: `Guest ${guest.name} joined table ${table.name}`
     };
     const data: INotificationFromGuest = {
       guestName: guest.name,
@@ -108,13 +114,28 @@ export class GuestsService {
     }
   }
 
-  // toDo change logic to Guest 1, Guest 2 and so on
-  private _generateGuestName(): string {
-    const currentDate = new Date();
-    const hours = currentDate.getHours().toString().padStart(2, '0');
-    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-    const currentTime = `${hours}:${minutes}:${seconds}`;
-    return `Guest ${currentTime}`;
+  private async _generateGuestName(tableId: string): Promise<string> {
+    const restaurant = await this._restaurantRepository.findOne({
+      include: [
+        {
+          model: RTable,
+          where: { id: tableId }
+        }
+      ]
+    });
+
+    const guestsCount = restaurant.guestsCount + 1;
+    await restaurant.update({ guestsCount });
+
+    return guestsCount.toString();
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  private async _deleteExpiredGuests(): Promise<void> {
+    const currentTime = new Date();
+    const expirationTime = new Date(currentTime.getTime() - 1.5 * 60 * 60 * 1000);
+    await this._guestRepository.destroy({
+      where: { createdAt: { [Op.lt]: expirationTime } }
+    });
   }
 }

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { AuthModule } from '@core/auth/auth.module';
 import { DatabaseModule } from '@core/database/database.module';
@@ -24,7 +25,8 @@ import { AppService } from './app.service';
       envFilePath: `.${process.env.NODE_ENV}.env`
     }),
     DatabaseModule,
-    AuthModule
+    AuthModule,
+    ScheduleModule.forRoot()
   ]
 })
 export class AppModule {}

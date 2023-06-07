@@ -12,7 +12,6 @@ import { Roles } from '@shared/constants';
 
 import { CreateRestaurantDto } from './dto';
 import { TRestaurantDetails, IRelatedRestaurant } from './interfaces';
-import { RESTAURANT_DETAILS_FIELDS } from './restaurants.constants';
 import { Restaurant } from './restaurants.model';
 
 @Injectable()
@@ -65,15 +64,19 @@ export class RestaurantsService {
   }
 
   public getRestaurantDetails(id: string): Promise<TRestaurantDetails> {
+    const attributes: (keyof TRestaurantDetails)[] = ['id', 'name'];
+
     return this._restaurantRepository.findOne({
-      attributes: [...RESTAURANT_DETAILS_FIELDS],
+      attributes,
       where: { id }
     });
   }
 
   public async getRestaurantDetailsBySubdomain(subdomain: string): Promise<TRestaurantDetails> {
+    const attributes: (keyof TRestaurantDetails)[] = ['id', 'name'];
+
     const restaurant = await this._restaurantRepository.findOne({
-      attributes: [...RESTAURANT_DETAILS_FIELDS],
+      attributes,
       where: { subdomain }
     });
 
