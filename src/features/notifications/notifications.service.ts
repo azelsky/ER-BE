@@ -24,20 +24,18 @@ export class NotificationsService {
     const attributes: (keyof Notification)[] = ['data', 'type', 'isNew', 'createdAt', 'id'];
     const orderField: keyof Notification = 'createdAt';
 
-    return this._notificationRepository.findAll({
+    const notifications = await this._notificationRepository.findAll({
       where: { userId: user.id },
       attributes,
       order: [[orderField, 'DESC']]
     });
-  }
-
-  public async markAllNotificationsAsRead(cognitoId: string): Promise<void> {
-    const user = await this._usersService.getUserByCognitoId(cognitoId);
 
     await this._notificationRepository.update(
       { isNew: false },
       { where: { userId: user.id, isNew: true } }
     );
+
+    return notifications;
   }
 
   public async getNewUserNotificationsCount(cognitoId: string): Promise<number> {
