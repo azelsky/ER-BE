@@ -6,4 +6,5 @@ export interface INotification {
   data: INotificationData;
   type: NotificationTypeEnum;
   createdAt: Date;
+  id: string;
 }

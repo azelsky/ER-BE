@@ -108,6 +108,7 @@ export class GuestsService {
     }
   }
 
+  // toDo change logic to Guest 1, Guest 2 and so on
   private _generateGuestName(): string {
     const currentDate = new Date();
     const hours = currentDate.getHours().toString().padStart(2, '0');
