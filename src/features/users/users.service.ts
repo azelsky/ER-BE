@@ -29,16 +29,20 @@ export class UsersService {
   }
 
   public getUserByCognitoId(cognitoId: string): Promise<User | null> {
+    const userAttr: (keyof User)[] = ['cognitoId', 'createdAt', 'updatedAt'];
+
     return this._userRepository.findOne({
       where: { cognitoId },
-      attributes: { exclude: ['cognitoId', 'createdAt', 'updatedAt'] }
+      attributes: { exclude: userAttr }
     });
   }
 
   public getUserByEmail(email: string): Promise<User | null> {
+    const userAttr: (keyof User)[] = ['cognitoId', 'createdAt', 'updatedAt'];
+
     return this._userRepository.findOne({
       where: { email },
-      attributes: { exclude: ['cognitoId', 'createdAt', 'updatedAt'] }
+      attributes: { exclude: userAttr }
     });
   }
 

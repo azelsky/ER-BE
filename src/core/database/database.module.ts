@@ -16,13 +16,20 @@ import { UserTable } from '@relations/user-table/user-table.model';
   imports: [
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: process.env.DB_HOST_NAME,
+      host: 'dpg-ci4o4u18g3ne0dm7s8ig-a',
       port: +process.env.DB_HOST_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      // uri: 'postgres://andriizelinskyi:GOv7cTmR47Yjl4hf5OAJUW3GTUGjeB4z@dpg-ci4o4u18g3ne0dm7s8ig-a.frankfurt-postgres.render.com/er',
       models: [User, Role, Restaurant, UserRole, UserRestaurant, Device, UserTable, Guest, RTable],
       autoLoadModels: true
+      // dialectOptions: {
+      //   ssl: {
+      //     require: true,
+      //     rejectUnauthorized: false, // Change this to true in production
+      //   },
+      // },
     })
   ],
   exports: [SequelizeModule]
