@@ -16,11 +16,11 @@ import { UserTable } from '@relations/user-table/user-table.model';
   imports: [
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: process.env.DATABASE_HOST_NAME,
-      port: 5432,
-      username: process.env.USER,
-      password: process.env.PASSWORD,
-      database: process.env.DATABASE_NAME,
+      host: process.env.DB_HOST_NAME,
+      port: +process.env.DB_HOST_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       models: [User, Role, Restaurant, UserRole, UserRestaurant, Device, UserTable, Guest, RTable],
       autoLoadModels: true
     })
