@@ -29,7 +29,7 @@ export class Restaurant extends Model<Restaurant, RestaurantCreationAttr> {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   subdomain: string;
 
-  @Column({ type: DataType.NUMBER, allowNull: false, defaultValue: 0, field: 'guests_count' })
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0, field: 'guests_count' })
   guestsCount: number;
 
   @Column({ field: 'created_at' })
