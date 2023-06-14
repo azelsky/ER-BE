@@ -14,7 +14,7 @@ async function bootstrap(): Promise<void> {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
-    origin: 'http://localhost:5000'
+    origin: ['http://localhost:5000', 'https://er-d7l5.onrender.com/']
   });
 
   await app.listen(port, () => {
