@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { ServiceAccount } from 'firebase-admin';
 
+// toDo move to env
 admin.initializeApp({
   credential: admin.credential.cert({
     type: 'service_account',

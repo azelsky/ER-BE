@@ -114,6 +114,10 @@ export class UsersService {
           through: { where: { restaurantId: restaurantId } }
         },
         {
+          model: Role,
+          where: { value: Roles.Waiter }
+        },
+        {
           model: Device
         }
       ],
