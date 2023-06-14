@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { Guest } from '@features/restaurants/guests/guests.model';
@@ -14,18 +15,35 @@ import { UserTable } from '@relations/user-table/user-table.model';
 
 @Module({
   imports: [
-    SequelizeModule.forRoot({
-      dialect: 'postgres',
-      port: +process.env.DB_HOST_PORT,
-      uri: process.env.DB_URI,
-      models: [User, Role, Restaurant, UserRole, UserRestaurant, Device, UserTable, Guest, RTable],
-      autoLoadModels: true,
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false // Change this to true in production
-        }
-      }
+    SequelizeModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        return {
+          dialect: 'postgres',
+          host: configService.get('DB_HOST_NAME'),
+          port: +configService.get('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_NAME'),
+          models: [
+            User,
+            Role,
+            Restaurant,
+            UserRole,
+            UserRestaurant,
+            Device,
+            UserTable,
+            Guest,
+            RTable
+          ],
+          autoLoadModels: true,
+          dialectOptions: {
+            ssl: {
+              require: true
+            }
+          }
+        };
+      },
+      inject: [ConfigService]
     })
   ],
   exports: [SequelizeModule]

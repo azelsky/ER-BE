@@ -22,7 +22,8 @@ import { AppService } from './app.service';
     RestaurantsModule,
     NotificationsModule,
     ConfigModule.forRoot({
-      envFilePath: `.${process.env.NODE_ENV}.env`
+      envFilePath: `.${process.env.NODE_ENV}.env`,
+      isGlobal: true
     }),
     DatabaseModule,
     AuthModule,
