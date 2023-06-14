@@ -32,6 +32,12 @@ export class RTable extends Model<RTable, TableAttr> implements TableAttr {
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
 
+  @Column({ field: 'created_at' })
+  createdAt: Date;
+
+  @Column({ field: 'updated_at' })
+  updatedAt: Date;
+
   @ForeignKey(() => Restaurant)
   @Column({ type: DataType.UUID, allowNull: false, field: 'restaurant_id' })
   restaurantId: string;

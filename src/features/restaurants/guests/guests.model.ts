@@ -8,7 +8,7 @@ interface GuestCreationAttr {
   name?: string;
 }
 
-@Table({ tableName: 'guests' })
+@Table({ tableName: 'guests', createdAt: false, updatedAt: false })
 export class Guest extends Model<Guest, GuestCreationAttr> {
   @Column({
     type: DataType.UUID,

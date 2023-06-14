@@ -21,23 +21,23 @@ export class UserRole extends Model<UserRole, UserRoleCreationAttr> {
   id: string;
 
   @ForeignKey(() => Role)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, field: 'role_id' })
   roleId: string;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, field: 'user_id' })
   userId: string;
 
   @ForeignKey(() => Restaurant)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, field: 'restaurant_id' })
   restaurantId: string;
 
-  @BelongsTo(() => Restaurant, { foreignKey: 'restaurantId', onDelete: 'CASCADE' })
+  @BelongsTo(() => Restaurant, { foreignKey: 'restaurant_id', onDelete: 'CASCADE' })
   restaurant: Restaurant;
 
-  @BelongsTo(() => User, { foreignKey: 'userId', onDelete: 'CASCADE' })
+  @BelongsTo(() => User, { foreignKey: 'user_id', onDelete: 'CASCADE' })
   user: User;
 
-  @BelongsTo(() => Role, { foreignKey: 'roleId', onDelete: 'CASCADE' })
+  @BelongsTo(() => Role, { foreignKey: 'role_id', onDelete: 'CASCADE' })
   role: Role;
 }

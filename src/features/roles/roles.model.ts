@@ -1,3 +1,4 @@
+import { UUIDV4 } from 'sequelize';
 import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
 
 import { Restaurant } from '@features/restaurants/restaurants.model';
@@ -14,6 +15,13 @@ interface RoleCreationAttr {
 
 @Table({ tableName: 'roles', createdAt: false, updatedAt: false })
 export class Role extends Model<Role, RoleCreationAttr> {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    defaultValue: UUIDV4
+  })
+  id: string;
+
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   value: Roles;
 

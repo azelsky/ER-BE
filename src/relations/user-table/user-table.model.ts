@@ -15,16 +15,16 @@ export class UserTable
 {
   // toDo add id uuid
   @ForeignKey(() => RTable)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, field: 'table_id' })
   tableId: string;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, field: 'user_id' })
   userId: string;
 
-  @BelongsTo(() => User, { foreignKey: 'userId', onDelete: 'CASCADE' })
+  @BelongsTo(() => User, { foreignKey: 'user_id', onDelete: 'CASCADE' })
   user: User;
 
-  @BelongsTo(() => RTable, { foreignKey: 'tableId', onDelete: 'CASCADE' })
+  @BelongsTo(() => RTable, { foreignKey: 'table_id', onDelete: 'CASCADE' })
   table: RTable;
 }

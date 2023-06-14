@@ -32,8 +32,14 @@ export class User extends Model<User, UserCreationAttr> {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   email: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false, field: 'cognito_id' })
   cognitoId: string;
+
+  @Column({ field: 'created_at' })
+  createdAt: Date;
+
+  @Column({ field: 'updated_at' })
+  updatedAt: Date;
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];
