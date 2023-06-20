@@ -8,7 +8,7 @@ interface GuestCreationAttr {
   name?: string;
 }
 
-@Table({ tableName: 'guests', createdAt: false, updatedAt: false })
+@Table({ tableName: 'guests', updatedAt: false })
 export class Guest extends Model<Guest, GuestCreationAttr> {
   @Column({
     type: DataType.UUID,
@@ -21,6 +21,9 @@ export class Guest extends Model<Guest, GuestCreationAttr> {
     allowNull: false
   })
   name: string;
+
+  @Column({ field: 'created_at' })
+  createdAt: Date;
 
   @ForeignKey(() => RTable)
   @Column({ type: DataType.UUID, allowNull: false, field: 'table_id' })
