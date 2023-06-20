@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
@@ -22,17 +23,27 @@ import { RTable } from './tables/tables.model';
 import { TablesService } from './tables/tables.service';
 import { TeamController } from './team/team.controller';
 import { TeamService } from './team/team.service';
+import { WaitersController } from './waiters/waiters.controller';
+import { Waiter } from './waiters/waiters.model';
+import { WaitersService } from './waiters/waiters.service';
 
 @Module({
-  controllers: [RestaurantsController, TeamController, GuestsController, TablesController],
-  providers: [RestaurantsService, TeamService, TablesService, GuestsService],
+  controllers: [
+    RestaurantsController,
+    TeamController,
+    GuestsController,
+    TablesController,
+    WaitersController
+  ],
+  providers: [RestaurantsService, TeamService, TablesService, GuestsService, WaitersService],
   imports: [
-    SequelizeModule.forFeature([Restaurant, UserRole, UserRestaurant, RTable, Guest]),
+    SequelizeModule.forFeature([Restaurant, UserRole, UserRestaurant, RTable, Guest, Waiter]),
     UsersModule,
     RolesModule,
     EmailModule,
     NotificationsModule,
-    UserTableModule
+    UserTableModule,
+    HttpModule
   ],
   exports: [RestaurantsService]
 })

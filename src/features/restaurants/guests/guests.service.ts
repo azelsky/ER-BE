@@ -18,6 +18,7 @@ import { IStatusResponse } from '@shared/interfaces';
 import { Guest } from './guests.model';
 import { Restaurant } from '../restaurants.model';
 import { TablesService } from '../tables/tables.service';
+import { WaitersService } from '../waiters/waiters.service';
 
 @Injectable()
 export class GuestsService {
@@ -26,7 +27,8 @@ export class GuestsService {
     @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
     private readonly _notificationsService: NotificationsService,
     private readonly _usersService: UsersService,
-    private readonly _tablesService: TablesService
+    private readonly _tablesService: TablesService,
+    private readonly _waitersService: WaitersService
   ) {}
 
   public async callWaiter(guestId: string): Promise<IStatusResponse> {
@@ -35,6 +37,7 @@ export class GuestsService {
 
     const table = await this._tablesService.getTable(guest.tableId);
 
+    await this._waitersService.sendNotifications(table.restaurantId, table.name, guest.name);
     // toDO translate
     const notificationPayload = {
       title: 'Request',

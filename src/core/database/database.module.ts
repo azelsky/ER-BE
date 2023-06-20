@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Guest } from '@features/restaurants/guests/guests.model';
 import { Restaurant } from '@features/restaurants/restaurants.model';
 import { RTable } from '@features/restaurants/tables/tables.model';
+import { Waiter } from '@features/restaurants/waiters/waiters.model';
 import { Role } from '@features/roles/roles.model';
 import { Device } from '@features/users/devices/devices.model';
 import { User } from '@features/users/users.model';
@@ -33,7 +34,8 @@ import { UserTable } from '@relations/user-table/user-table.model';
             Device,
             UserTable,
             Guest,
-            RTable
+            RTable,
+            Waiter
           ],
           autoLoadModels: true,
           dialectOptions: {
