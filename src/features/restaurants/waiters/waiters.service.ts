@@ -48,12 +48,10 @@ export class WaitersService {
     return { success: true };
   }
 
-  public async IsAuthorized(messengerUserId: string): Promise<boolean> {
-    const user = await this._waiterRepository.findOne({
-      where: { messengerUserId, confirmationCode: null }
+  public getAuthorizedWaiter(messengerUserId: string): Promise<Waiter | null> {
+    return this._waiterRepository.findOne({
+      where: { messengerUserId }
     });
-
-    return !!user;
   }
 
   public async sendNotifications(
@@ -65,13 +63,24 @@ export class WaitersService {
     const telegramBotToken = this._configService.get('TELEGRAM_BOT_TOKEN');
 
     for (const waiter of waiters) {
-      await firstValueFrom(
-        this._httpService.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-          chat_id: waiter.messengerUserId,
-          text: `Гість ${guestName} з столу ${tableName} очікуває вас`
-        })
-      );
+      if (waiter.isWorking) {
+        await firstValueFrom(
+          this._httpService.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            chat_id: waiter.messengerUserId,
+            text: `Гість ${guestName} з столу ${tableName} очікуває вас`
+          })
+        );
+      }
     }
+
+    return { success: true };
+  }
+
+  public async changeIsWorkingStatus(
+    messengerUserId: string,
+    isWorking: boolean
+  ): Promise<IStatusResponse> {
+    await this._waiterRepository.update({ isWorking }, { where: { messengerUserId } });
 
     return { success: true };
   }

@@ -27,7 +27,4 @@ export class ConfirmWaiterDto {
 export class IsAuthorizedDto {
   @IsNotEmpty()
   messengerUserId: string;
-
-  @IsNotEmpty({ message: 'Token is required' })
-  token: string;
 }

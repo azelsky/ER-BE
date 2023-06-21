@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 
 import { SkipAuthGuard } from '@core/auth/decorators';
 
@@ -32,8 +32,28 @@ export class WaitersController {
 
   @SkipAuthGuard()
   @UseGuards(TelegramGuard)
-  @Post('is-authorized')
-  public IsAuthorized(@Body() data: IsAuthorizedDto): Promise<boolean> {
-    return this._waitersService.IsAuthorized(data.messengerUserId);
+  @Post(':messengerUserId')
+  public getAuthorizedWaiter(
+    @Param() { messengerUserId }: IsAuthorizedDto
+  ): Promise<Waiter | null> {
+    return this._waitersService.getAuthorizedWaiter(messengerUserId);
+  }
+
+  @SkipAuthGuard()
+  @UseGuards(TelegramGuard)
+  @Post(':messengerUserId/notifications/enable')
+  public enableNotifications(
+    @Param() { messengerUserId }: IsAuthorizedDto
+  ): Promise<IStatusResponse> {
+    return this._waitersService.changeIsWorkingStatus(messengerUserId, true);
+  }
+
+  @SkipAuthGuard()
+  @UseGuards(TelegramGuard)
+  @Post(':messengerUserId/notifications/disable')
+  public disableNotifications(
+    @Param() { messengerUserId }: IsAuthorizedDto
+  ): Promise<IStatusResponse> {
+    return this._waitersService.changeIsWorkingStatus(messengerUserId, false);
   }
 }

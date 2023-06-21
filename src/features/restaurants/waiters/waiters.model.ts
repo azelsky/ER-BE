@@ -46,7 +46,7 @@ export class Waiter extends Model<Waiter, WaiterCreationAttr> {
     field: 'is_working',
     defaultValue: true
   })
-  isWorking: number;
+  isWorking: boolean;
 
   @ForeignKey(() => Restaurant)
   @Column({ type: DataType.UUID, allowNull: false, field: 'restaurant_id' })
