@@ -23,6 +23,7 @@ import { RTable } from './tables/tables.model';
 import { TablesService } from './tables/tables.service';
 import { TeamController } from './team/team.controller';
 import { TeamService } from './team/team.service';
+import { WaiterController } from './waiters/waiter.controller';
 import { WaitersController } from './waiters/waiters.controller';
 import { Waiter } from './waiters/waiters.model';
 import { WaitersService } from './waiters/waiters.service';
@@ -33,7 +34,8 @@ import { WaitersService } from './waiters/waiters.service';
     TeamController,
     GuestsController,
     TablesController,
-    WaitersController
+    WaitersController,
+    WaiterController
   ],
   providers: [RestaurantsService, TeamService, TablesService, GuestsService, WaitersService],
   imports: [

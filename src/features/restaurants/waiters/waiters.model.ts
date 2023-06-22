@@ -1,3 +1,4 @@
+import { UUIDV4 } from 'sequelize';
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 
 import { TMessengerType } from './waiters.interfaces';
@@ -13,7 +14,8 @@ interface WaiterCreationAttr {
 export class Waiter extends Model<Waiter, WaiterCreationAttr> {
   @Column({
     type: DataType.UUID,
-    primaryKey: true
+    primaryKey: true,
+    defaultValue: UUIDV4
   })
   id: string;
 

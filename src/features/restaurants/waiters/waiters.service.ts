@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { firstValueFrom } from 'rxjs';
 
 import { generateRandomNumberCode } from '@shared/helper';
-import { IStatusResponse } from '@shared/interfaces';
+import { IDeletedEntity, IStatusResponse } from '@shared/interfaces';
 
 import { TMessengerType } from './waiters.interfaces';
 import { Waiter } from './waiters.model';
@@ -23,6 +23,19 @@ export class WaitersService {
       name,
       confirmationCode: generateRandomNumberCode(6),
       restaurantId
+    });
+  }
+
+  public async delete(id: string): Promise<IDeletedEntity> {
+    await this._waiterRepository.destroy({
+      where: { id }
+    });
+    return { id };
+  }
+
+  public async getWaiters(restaurantId: string): Promise<Waiter[]> {
+    return this._waiterRepository.findAll({
+      where: { restaurantId }
     });
   }
 
@@ -63,7 +76,8 @@ export class WaitersService {
     const telegramBotToken = this._configService.get('TELEGRAM_BOT_TOKEN');
 
     for (const waiter of waiters) {
-      if (waiter.isWorking) {
+      const accountIsConfirmed = !!waiter.messengerUserId;
+      if (waiter.isWorking && accountIsConfirmed) {
         await firstValueFrom(
           this._httpService.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
             chat_id: waiter.messengerUserId,

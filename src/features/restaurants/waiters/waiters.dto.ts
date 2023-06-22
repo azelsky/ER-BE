@@ -5,9 +5,6 @@ import { TMessengerType } from './waiters.interfaces';
 export class CreateWaiterDto {
   @IsNotEmpty()
   name: string;
-
-  @IsNotEmpty({ message: 'Restaurant Id is required' })
-  readonly restaurantId: string;
 }
 
 export class ConfirmWaiterDto {
