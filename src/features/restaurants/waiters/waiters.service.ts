@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
-import { firstValueFrom } from 'rxjs';
+import { concatMap, first } from 'rxjs';
 
 import { generateRandomNumberCode } from '@shared/helper';
 import { IDeletedEntity, IStatusResponse } from '@shared/interfaces';
@@ -40,7 +40,7 @@ export class WaitersService {
   }
 
   public async confirm(
-    confirmationCode: string,
+    confirmationCode: number,
     messengerUserId: string,
     messengerType: TMessengerType
   ): Promise<IStatusResponse> {
@@ -78,12 +78,33 @@ export class WaitersService {
     for (const waiter of waiters) {
       const accountIsConfirmed = !!waiter.messengerUserId;
       if (waiter.isWorking && accountIsConfirmed) {
-        await firstValueFrom(
-          this._httpService.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+        this._httpService
+          .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
             chat_id: waiter.messengerUserId,
-            text: `Гість ${guestName} з столу ${tableName} очікуває вас`
+            text: `🛎🛎🛎`
           })
-        );
+          .pipe(
+            concatMap(() =>
+              this._httpService
+                .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                  chat_id: waiter.messengerUserId,
+                  text: `🕺💃 Гість ${guestName}  з столу ${tableName} очікуває вас 🕒`
+                })
+                .pipe(
+                  concatMap(() =>
+                    this._httpService.post(
+                      `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
+                      {
+                        chat_id: waiter.messengerUserId,
+                        text: `Поспішіть 🏃`
+                      }
+                    )
+                  )
+                )
+            ),
+            first()
+          )
+          .subscribe();
       }
     }
 

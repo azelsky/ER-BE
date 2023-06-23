@@ -113,15 +113,15 @@ export class UsersService {
           model: Restaurant,
           through: { where: { restaurantId: restaurantId } }
         },
-        {
-          model: Role,
-          where: { value: Roles.Waiter }
-        },
+        // {
+        //   model: Role,
+        //   where: { value: Roles.Waiter }
+        // },
         {
           model: Device
         }
-      ],
-      where: { '$restaurants.id$': { [Op.ne]: null } }
+      ]
+      // where: { '$restaurants.id$': { [Op.ne]: null } }
     });
   }
 }

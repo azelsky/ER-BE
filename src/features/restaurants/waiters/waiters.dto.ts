@@ -10,7 +10,7 @@ export class CreateWaiterDto {
 export class ConfirmWaiterDto {
   @IsNotEmpty()
   @Length(6, 6, { message: 'Confirmation code must be exactly 6 characters' })
-  confirmationCode: string;
+  confirmationCode: number;
   @IsNotEmpty()
   messengerUserId: string;
 

@@ -37,11 +37,10 @@ export class GuestsService {
 
     const table = await this._tablesService.getTable(guest.tableId);
 
-    await this._waitersService.sendNotifications(table.restaurantId, table.name, guest.name);
-    // toDO translate
+    this._waitersService.sendNotifications(table.restaurantId, table.name, guest.name);
     const notificationPayload = {
-      title: 'Request',
-      body: `Come up to ${table.name} table. Guest ${guest.name} call you`
+      title: 'Сповіщення',
+      body: `Гість ${guest.name} з столу ${table.name} покликав офіціанта`
     };
     const data: INotificationFromGuest = {
       guestName: guest.name,
@@ -64,28 +63,11 @@ export class GuestsService {
     }
 
     const guestName = await this._generateGuestName(tableId);
-    const guest = await this._guestRepository.create({
+    await this._guestRepository.create({
       tableId,
       id: guestId,
       name: guestName
     });
-    const table = await this._tablesService.getTable(tableId);
-
-    // toDO translate
-    const notificationPayload = {
-      title: 'New Guest',
-      body: `Guest ${guest.name} joined table ${table.name}`
-    };
-    const data: INotificationFromGuest = {
-      guestName: guest.name,
-      tableName: table.name
-    };
-    await this._sendNotificationsToWaiters(
-      tableId,
-      NotificationTypeEnum.NewGuest,
-      data,
-      notificationPayload
-    );
 
     return { success: true };
   }
