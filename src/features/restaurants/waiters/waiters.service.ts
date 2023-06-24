@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
-import { concatMap, first } from 'rxjs';
+import { concatMap, delay, first } from 'rxjs';
 
 import { generateRandomNumberCode } from '@shared/helper';
 import { IDeletedEntity, IStatusResponse } from '@shared/interfaces';
@@ -81,16 +81,18 @@ export class WaitersService {
         this._httpService
           .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
             chat_id: waiter.messengerUserId,
-            text: `🛎🛎🛎`
+            text: `__________________________________\n\n🛎Стіл: ${tableName}🛎`
           })
           .pipe(
+            delay(1000),
             concatMap(() =>
               this._httpService
                 .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                   chat_id: waiter.messengerUserId,
-                  text: `🕺💃 Гість ${guestName}  з столу ${tableName} очікуває вас 🕒`
+                  text: `🕺💃 Гість ${guestName} очікуває вас 🕒`
                 })
                 .pipe(
+                  delay(1000),
                   concatMap(() =>
                     this._httpService.post(
                       `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
