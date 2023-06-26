@@ -44,6 +44,11 @@ export class WaitersService {
     messengerUserId: string,
     messengerType: TMessengerType
   ): Promise<IStatusResponse> {
+    console.log('WaitersService confirm input', {
+      confirmationCode,
+      messengerUserId,
+      messengerType
+    });
     const waiter = await this._waiterRepository.findOne({ where: { confirmationCode } });
 
     if (!waiter) {

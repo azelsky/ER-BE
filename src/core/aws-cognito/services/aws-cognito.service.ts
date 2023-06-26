@@ -1,4 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   AuthenticationDetails,
   CognitoUser,
@@ -11,9 +12,11 @@ import { AuthResponse } from '../../auth/interfaces';
 
 @Injectable()
 export class AwsCognitoService {
+  constructor(private readonly _configService: ConfigService) {}
+
   private readonly _userPool: CognitoUserPool = new CognitoUserPool({
-    UserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
-    ClientId: process.env.AWS_COGNITO_CLIENT_ID
+    UserPoolId: this._configService.get('AWS_COGNITO_USER_POOL_ID'),
+    ClientId: this._configService.get('AWS_COGNITO_CLIENT_ID')
   });
 
   public async registerUser(email: string, name: string, password: string): Promise<string> {
