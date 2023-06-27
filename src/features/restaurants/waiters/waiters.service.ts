@@ -3,8 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import { concatMap, delay, first } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
-import { generateRandomNumberCode } from '@shared/helper';
 import { IDeletedEntity, IStatusResponse } from '@shared/interfaces';
 
 import { TMessengerType } from './waiters.interfaces';
@@ -21,7 +21,7 @@ export class WaitersService {
   public async create(name: string, restaurantId: string): Promise<Waiter> {
     return this._waiterRepository.create({
       name,
-      confirmationCode: generateRandomNumberCode(6),
+      confirmationCode: uuid(),
       restaurantId
     });
   }
@@ -40,7 +40,7 @@ export class WaitersService {
   }
 
   public async confirm(
-    confirmationCode: number,
+    confirmationCode: string,
     messengerUserId: string,
     messengerType: TMessengerType
   ): Promise<IStatusResponse> {

@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty, Length } from 'class-validator';
+import { IsIn, IsNotEmpty } from 'class-validator';
 
 import { TMessengerType } from './waiters.interfaces';
 
@@ -9,8 +9,8 @@ export class CreateWaiterDto {
 
 export class ConfirmWaiterDto {
   @IsNotEmpty()
-  @Length(6, 6, { message: 'Confirmation code must be exactly 6 characters' })
-  confirmationCode: number;
+  confirmationCode: string;
+
   @IsNotEmpty()
   messengerUserId: string;
 

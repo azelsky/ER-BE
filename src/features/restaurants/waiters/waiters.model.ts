@@ -6,7 +6,7 @@ import { Restaurant } from '../restaurants.model';
 
 interface WaiterCreationAttr {
   name: string;
-  confirmationCode: number;
+  confirmationCode: string;
   restaurantId: string;
 }
 
@@ -38,10 +38,10 @@ export class Waiter extends Model<Waiter, WaiterCreationAttr> {
   messengerType: TMessengerType;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     field: 'confirmation_code'
   })
-  confirmationCode: number;
+  confirmationCode: string;
 
   @Column({
     type: DataType.BOOLEAN,

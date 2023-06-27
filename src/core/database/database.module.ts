@@ -19,7 +19,7 @@ import { UserTable } from '@relations/user-table/user-table.model';
     SequelizeModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
         return {
-          dialect: 'postgres',
+          dialect: configService.get('DB_DIALECT'),
           host: configService.get('DB_HOST_NAME'),
           port: +configService.get('DB_PORT'),
           username: configService.get('DB_USERNAME'),
@@ -40,7 +40,8 @@ import { UserTable } from '@relations/user-table/user-table.model';
           autoLoadModels: true,
           dialectOptions: {
             ssl: {
-              require: true
+              require: true,
+              rejectUnauthorized: false
             }
           }
         };
