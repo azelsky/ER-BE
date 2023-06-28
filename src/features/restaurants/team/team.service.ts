@@ -1,6 +1,7 @@
 import * as querystring from 'querystring';
 
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 
@@ -21,7 +22,8 @@ export class TeamService {
     @InjectModel(UserRestaurant) private readonly _userRestaurantRepository: typeof UserRestaurant,
     private readonly _usersService: UsersService,
     private readonly _sequelize: Sequelize,
-    private readonly _emailService: EmailService
+    private readonly _emailService: EmailService,
+    private readonly _configService: ConfigService
   ) {}
 
   public getTeam(restaurantId: string): Promise<TTeamMember[]> {
@@ -47,6 +49,7 @@ export class TeamService {
         );
 
         const encodedEmail = querystring.escape(userEmail);
+        const appLink = this._configService.get<string>('APP_LINK');
 
         await this._emailService.send({
           subject: 'Complete Registration',
@@ -54,7 +57,7 @@ export class TeamService {
           html: `
             <h2>Complete Registration</h2>
             <p>To complete your registration, please click the following link:</p>
-            <p><a href="http://localhost:5000/complete-registration?email=${encodedEmail}">Complete Registration</a></p>
+            <p><a href="${appLink}/complete-registration?email=${encodedEmail}">Complete Registration</a></p>
           `
         });
       }

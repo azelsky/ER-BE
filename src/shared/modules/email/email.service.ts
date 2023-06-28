@@ -4,7 +4,6 @@ import * as SendGrid from '@sendgrid/mail';
 
 import { IStatusResponse } from '@shared/interfaces';
 
-import { FROM } from './email.constants';
 import { ISendParams } from './models/send-params.interface';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class EmailService {
     try {
       const mailData: SendGrid.MailDataRequired = {
         ...params,
-        from: FROM
+        from: this.configService.get<string>('SENDGRID_EMAIL')
       };
       await SendGrid.send(mailData);
       return { success: true, message: 'Email sent successfully' };
