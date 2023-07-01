@@ -18,7 +18,7 @@ import { UserTable } from '@relations/user-table/user-table.model';
   imports: [
     SequelizeModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
-        return {
+        const dbConfig = {
           dialect: configService.get('DB_DIALECT'),
           host: configService.get('DB_HOST_NAME'),
           port: +configService.get('DB_PORT'),
@@ -45,6 +45,12 @@ import { UserTable } from '@relations/user-table/user-table.model';
             }
           }
         };
+
+        if (process.env.NODE_ENV === 'development') {
+          delete dbConfig.dialectOptions;
+        }
+
+        return dbConfig;
       },
       inject: [ConfigService]
     })

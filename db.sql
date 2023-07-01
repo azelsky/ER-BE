@@ -9,6 +9,9 @@ CREATE TABLE `user_role` (
   FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO roles (id, name, value) VALUES (UUID(), 'Admin', 'ADMIN');
+INSERT INTO roles (id, name, value) VALUES (UUID(), 'Owner', 'OWNER');
+
 -- postgreSQL
 CREATE TABLE user_role (
   user_id UUID,
