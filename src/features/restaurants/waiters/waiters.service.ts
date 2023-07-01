@@ -103,7 +103,7 @@ export class WaitersService {
                       `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
                       {
                         chat_id: waiter.messengerUserId,
-                        text: `Стіл: ${tableName}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
+                        text: `🛎Стіл: ${tableName}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
                       }
                     )
                   )
