@@ -86,7 +86,7 @@ export class WaitersService {
         this._httpService
           .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
             chat_id: waiter.messengerUserId,
-            text: `__________________________________\n\n🛎Стіл: ${tableName}🛎`
+            text: `🛎Стіл: ${tableName}🛎`
           })
           .pipe(
             delay(1000),
@@ -103,7 +103,7 @@ export class WaitersService {
                       `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
                       {
                         chat_id: waiter.messengerUserId,
-                        text: `Поспішіть 🏃`
+                        text: `Стіл: ${tableName}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
                       }
                     )
                   )
