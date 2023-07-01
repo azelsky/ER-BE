@@ -6,3 +6,5 @@ package-lock.json
 .env
 .production.env
 .development.env
+
+restart-server.js
