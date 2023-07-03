@@ -46,7 +46,7 @@ import { UserTable } from '@relations/user-table/user-table.model';
           }
         };
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.LOCAL) {
           delete dbConfig.dialectOptions;
         }
 
