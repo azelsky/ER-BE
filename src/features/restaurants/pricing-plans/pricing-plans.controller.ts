@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { SkipAuthGuard } from '@core/auth/decorators';
 
 import { BuyPricingPlanDto } from './pricing-plans.dto';
+import { IBuyPricingPlanResponse } from './pricing-plans.interfaces';
 import { PricingPlan } from './pricing-plans.model';
 import { PricingPlansService } from './pricing-plans.service';
 
@@ -17,7 +18,7 @@ export class PricingPlansController {
   }
 
   @Post('buy')
-  public async buy(@Body() data: BuyPricingPlanDto): Promise<string> {
+  public async buy(@Body() data: BuyPricingPlanDto): Promise<IBuyPricingPlanResponse> {
     return this._pricingPlansService.buy(data);
   }
 

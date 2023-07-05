@@ -5,6 +5,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import {
+  IBuyPricingPlanResponse,
   IMonoCreateInvoice,
   IPaymentResponse,
   MonoPaymentStatus
@@ -45,7 +46,10 @@ export class MonobankPaymentService {
     };
   }
 
-  public async buy(price: number, restaurantPricingPlanId: string): Promise<string> {
+  public async buy(
+    price: number,
+    restaurantPricingPlanId: string
+  ): Promise<IBuyPricingPlanResponse> {
     const xToken = this._configService.get('MONOBANK_X_TOKEN');
     const appLink = this._configService.get('APP_LINK');
     const handledPrice = price * 100;
@@ -71,6 +75,6 @@ export class MonobankPaymentService {
       )
       .toPromise();
 
-    return response.data.pageUrl;
+    return { paymentPageUrl: response.data.pageUrl };
   }
 }

@@ -8,6 +8,10 @@ export interface IPaymentResponse {
   restaurantPricingPlanId: string;
 }
 
+export interface IBuyPricingPlanResponse {
+  paymentPageUrl: string;
+}
+
 export enum PricingPlanTypes {
   Trial = 'trial',
   Monthly = 'monthly',

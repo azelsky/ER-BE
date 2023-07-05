@@ -6,7 +6,7 @@ import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restau
 
 import { MonobankPaymentService } from './monobank-payment.service';
 import { BuyPricingPlanDto } from './pricing-plans.dto';
-import { PricingPlanTypes } from './pricing-plans.interfaces';
+import { IBuyPricingPlanResponse, PricingPlanTypes } from './pricing-plans.interfaces';
 import { PricingPlan } from './pricing-plans.model';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class PricingPlansService {
     console.log('paymentResponse', response);
   }
 
-  public async buy(data: BuyPricingPlanDto): Promise<string> {
+  public async buy(data: BuyPricingPlanDto): Promise<IBuyPricingPlanResponse> {
     const pricingPlan = await this._getPricingPlan(data.pricingPlanId);
     const restaurantPricingPlan = await this._createRestaurantPricingPlan(
       pricingPlan,

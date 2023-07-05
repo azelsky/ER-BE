@@ -1,6 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-
-import { PricingPlanTypes } from './pricing-plans.interfaces';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class BuyPricingPlanDto {
   @IsNotEmpty()
@@ -8,6 +6,6 @@ export class BuyPricingPlanDto {
   restaurantId: string;
 
   @IsNotEmpty()
-  @IsEnum(PricingPlanTypes)
+  @IsString()
   pricingPlanId: string;
 }
