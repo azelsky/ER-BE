@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 
@@ -6,7 +7,11 @@ import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restau
 
 import { MonobankPaymentService } from './monobank-payment.service';
 import { BuyPricingPlanDto } from './pricing-plans.dto';
-import { IBuyPricingPlanResponse, PricingPlanTypes } from './pricing-plans.interfaces';
+import {
+  IBuyPricingPlanResponse,
+  PaymentStatuses,
+  PricingPlanTypes
+} from './pricing-plans.interfaces';
 import { PricingPlan } from './pricing-plans.model';
 
 @Injectable()
@@ -21,6 +26,10 @@ export class PricingPlansService {
   public async paymentResponse(request: Request): Promise<void> {
     const response = this._paymentService.paymentResponse(request);
     console.log('paymentResponse', response);
+
+    if (response.status === PaymentStatuses.Success) {
+      this._confirmRestaurantPricingPlan(response.restaurantPricingPlanId);
+    }
   }
 
   public async buy(data: BuyPricingPlanDto): Promise<IBuyPricingPlanResponse> {
@@ -43,6 +52,19 @@ export class PricingPlansService {
     });
   }
 
+  public findPricingPlansEndDate(
+    restaurantPricingPlans: RestaurantPricingPlan[] = []
+  ): Date | null {
+    const latestPlan = restaurantPricingPlans.reduce((prevPlan, currentPlan) => {
+      if ((!prevPlan || currentPlan.endDate > prevPlan.endDate) && currentPlan.payed) {
+        return currentPlan;
+      }
+      return prevPlan;
+    }, null);
+
+    return latestPlan?.endDate || null;
+  }
+
   private _getPricingPlan(id: string): Promise<PricingPlan> {
     return this._pricingPlanRepository.findOne({ where: { id } });
   }
@@ -51,11 +73,12 @@ export class PricingPlansService {
     pricingPlan: PricingPlan,
     restaurantId: string
   ): Promise<RestaurantPricingPlan> {
-    const currentPricingPlan = await this._getCurrentRestaurantPricingPlan(restaurantId);
+    const currentPricingPlans = await this._getCurrentRestaurantPricingPlans(restaurantId);
+    const currentPricingPlansEndDate = this.findPricingPlansEndDate(currentPricingPlans);
     let startDate = new Date();
 
-    if (currentPricingPlan) {
-      startDate = new Date(currentPricingPlan.endDate);
+    if (currentPricingPlansEndDate) {
+      startDate = new Date(currentPricingPlansEndDate);
     }
 
     const endDate = this._createEndDate(startDate, pricingPlan.type);
@@ -66,6 +89,18 @@ export class PricingPlansService {
       restaurantId,
       pricingPlanId: pricingPlan.id
     });
+  }
+
+  private async _confirmRestaurantPricingPlan(id: string): Promise<void> {
+    const [rowCount] = await this._restaurantPricingPlanRepository.update(
+      { payed: true },
+      { where: { id } }
+    );
+
+    if (rowCount === 0) {
+      console.log('Restaurant Pricing Plan not found');
+      throw new NotFoundException('Restaurant Pricing Plan not found');
+    }
   }
 
   private _createEndDate(startDate, pricingPlanType: PricingPlanTypes): Date {
@@ -82,20 +117,21 @@ export class PricingPlansService {
     return endDate;
   }
 
-  private _getCurrentRestaurantPricingPlan(restaurantId): Promise<RestaurantPricingPlan | null> {
-    const currentDate = new Date();
-
-    return this._restaurantPricingPlanRepository.findOne({
+  private _getCurrentRestaurantPricingPlans(restaurantId): Promise<RestaurantPricingPlan[] | null> {
+    return this._restaurantPricingPlanRepository.findAll({
       where: {
-        restaurantId,
-        startDate: {
-          [Op.lte]: currentDate
-        },
-        endDate: {
-          [Op.gte]: currentDate
-        },
-        payed: true
+        restaurantId
       }
+    });
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  private _deleteNotPayedPricingPlans(): void {
+    const currentTime = new Date();
+    const expirationTime = new Date(currentTime.getTime() - 60 * 60 * 1000);
+
+    this._restaurantPricingPlanRepository.destroy({
+      where: { startDate: { [Op.lt]: expirationTime }, payed: false }
     });
   }
 }

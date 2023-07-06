@@ -4,7 +4,7 @@ export interface IMonoCreateInvoice {
 }
 
 export interface IPaymentResponse {
-  status: MonoPaymentStatus;
+  status: PaymentStatuses;
   restaurantPricingPlanId: string;
 }
 
@@ -19,7 +19,7 @@ export enum PricingPlanTypes {
   Annual = 'annual'
 }
 
-export enum MonoPaymentStatus {
+export enum PaymentStatuses {
   Created = 'created',
   Processing = 'processing',
   Hold = 'hold',

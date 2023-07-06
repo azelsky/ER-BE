@@ -8,7 +8,7 @@ import {
   IBuyPricingPlanResponse,
   IMonoCreateInvoice,
   IPaymentResponse,
-  MonoPaymentStatus
+  PaymentStatuses
 } from './pricing-plans.interfaces';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class MonobankPaymentService {
     }
 
     return {
-      status: request.body['status'] as MonoPaymentStatus,
+      status: request.body['status'] as PaymentStatuses,
       restaurantPricingPlanId: request.body['reference']
     };
   }
@@ -64,7 +64,7 @@ export class MonobankPaymentService {
             reference: restaurantPricingPlanId
           },
           redirectUrl: appLink,
-          webHookUrl: `${this._api}/restaurants/pricing-plans/response`,
+          webHookUrl: `${this._api}/restaurants/pricing-plans/payment-response`,
           validity: 3600
         },
         {

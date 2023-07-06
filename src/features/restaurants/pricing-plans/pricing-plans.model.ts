@@ -1,7 +1,10 @@
 import { UUIDV4 } from 'sequelize';
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
+
+import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
 
 import { PricingPlanTypes } from './pricing-plans.interfaces';
+import { Restaurant } from '../restaurants.model';
 
 @Table({ tableName: 'pricing_plans', createdAt: false, updatedAt: false })
 export class PricingPlan extends Model<PricingPlan> {
@@ -20,4 +23,7 @@ export class PricingPlan extends Model<PricingPlan> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   type: PricingPlanTypes;
+
+  @BelongsToMany(() => Restaurant, () => RestaurantPricingPlan)
+  restaurants: Restaurant[];
 }

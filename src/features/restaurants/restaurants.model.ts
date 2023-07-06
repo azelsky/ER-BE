@@ -4,6 +4,7 @@ import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequeliz
 import { Role } from '@features/roles/roles.model';
 import { User } from '@features/users/users.model';
 
+import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
 import { UserRestaurant } from '@relations/user-restaurant/user-restaurant.model';
 import { UserRole } from '@relations/user-role/user-role.model';
 
@@ -43,6 +44,9 @@ export class Restaurant extends Model<Restaurant, RestaurantCreationAttr> {
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];
+
+  @HasMany(() => RestaurantPricingPlan)
+  plans: RestaurantPricingPlan[];
 
   @HasMany(() => RTable)
   tables: RTable[];

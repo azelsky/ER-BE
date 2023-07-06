@@ -8,10 +8,14 @@ import { RolesService } from '@features/roles/roles.service';
 import { User } from '@features/users/users.model';
 import { UsersService } from '@features/users/users.service';
 
+import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
+
 import { Roles } from '@shared/constants';
+import { omit } from '@shared/helper';
 
 import { CreateRestaurantDto } from './dto';
 import { TRestaurantDetails, IRelatedRestaurant } from './interfaces';
+import { PricingPlansService } from './pricing-plans/pricing-plans.service';
 import { Restaurant } from './restaurants.model';
 
 @Injectable()
@@ -20,7 +24,8 @@ export class RestaurantsService {
     @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
     private readonly _sequelize: Sequelize,
     private readonly _usersService: UsersService,
-    private readonly _rolesService: RolesService
+    private readonly _rolesService: RolesService,
+    private readonly _pricingPlansService: PricingPlansService
   ) {}
 
   public async create(
@@ -45,22 +50,36 @@ export class RestaurantsService {
     const roleAttributes: (keyof Role)[] = ['name', 'value', 'id'];
     const restaurantAttributes: (keyof IRelatedRestaurant)[] = ['id', 'name', 'subdomain'];
     const user = await this._usersService.getUserByCognitoId(cognitoId);
+    const omitRestaurantAttr: (keyof Pick<Restaurant, 'plans'>)[] = ['plans'];
 
-    return this._restaurantRepository.findAll<Restaurant>({
-      include: [
-        {
-          model: User,
-          where: { cognitoId },
-          attributes: []
-        },
-        {
-          model: Role,
-          through: { attributes: [], where: { userId: user.id } },
-          attributes: roleAttributes
-        }
-      ],
-      attributes: restaurantAttributes
-    });
+    return this._restaurantRepository
+      .findAll<Restaurant>({
+        include: [
+          {
+            model: User,
+            where: { cognitoId },
+            attributes: []
+          },
+          {
+            model: Role,
+            through: { attributes: [], where: { userId: user.id } },
+            attributes: roleAttributes
+          },
+          {
+            model: RestaurantPricingPlan
+          }
+        ],
+        attributes: restaurantAttributes
+      })
+      .then(restaurants => {
+        return restaurants.map(restaurant => {
+          const endDate = this._pricingPlansService.findPricingPlansEndDate(restaurant.plans);
+          return {
+            ...omit(restaurant.dataValues, omitRestaurantAttr),
+            endDate
+          };
+        });
+      });
   }
 
   public getRestaurantDetails(id: string): Promise<TRestaurantDetails> {
