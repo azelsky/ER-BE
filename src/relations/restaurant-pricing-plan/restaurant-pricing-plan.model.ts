@@ -11,7 +11,7 @@ interface RestaurantPricingPlanCreationAttr {
   pricingPlanId: string;
 }
 
-@Table({ tableName: 'restaurant_pricing_plan', createdAt: false, updatedAt: false })
+@Table({ tableName: 'restaurant_pricing_plan', updatedAt: false })
 export class RestaurantPricingPlan
   extends Model<RestaurantPricingPlan, RestaurantPricingPlanCreationAttr>
   implements RestaurantPricingPlanCreationAttr
@@ -29,8 +29,11 @@ export class RestaurantPricingPlan
   @Column({ field: 'end_date', type: DataType.DATE })
   endDate: Date;
 
+  @Column({ field: 'created_at', type: DataType.DATE })
+  createdAt: Date;
+
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  payed: boolean;
+  paid: boolean;
 
   @ForeignKey(() => Restaurant)
   @Column({ type: DataType.UUID, field: 'restaurant_id' })

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
@@ -56,7 +56,7 @@ export class PricingPlansService {
     restaurantPricingPlans: RestaurantPricingPlan[] = []
   ): Date | null {
     const latestPlan = restaurantPricingPlans.reduce((prevPlan, currentPlan) => {
-      if ((!prevPlan || currentPlan.endDate > prevPlan.endDate) && currentPlan.payed) {
+      if ((!prevPlan || currentPlan.endDate > prevPlan.endDate) && currentPlan.paid) {
         return currentPlan;
       }
       return prevPlan;
@@ -73,12 +73,12 @@ export class PricingPlansService {
     pricingPlan: PricingPlan,
     restaurantId: string
   ): Promise<RestaurantPricingPlan> {
-    const currentPricingPlans = await this._getCurrentRestaurantPricingPlans(restaurantId);
-    const currentPricingPlansEndDate = this.findPricingPlansEndDate(currentPricingPlans);
+    const currentPlans = await this._getCurrentRestaurantPricingPlans(restaurantId);
+    const currentEndDate = new Date(this.findPricingPlansEndDate(currentPlans));
     let startDate = new Date();
 
-    if (currentPricingPlansEndDate) {
-      startDate = new Date(currentPricingPlansEndDate);
+    if (currentEndDate > startDate) {
+      startDate = currentEndDate;
     }
 
     const endDate = this._createEndDate(startDate, pricingPlan.type);
@@ -92,14 +92,20 @@ export class PricingPlansService {
   }
 
   private async _confirmRestaurantPricingPlan(id: string): Promise<void> {
-    const [rowCount] = await this._restaurantPricingPlanRepository.update(
-      { payed: true },
-      { where: { id } }
-    );
+    const pricingPlan = await this._getRestaurantPricingPlan(id);
 
-    if (rowCount === 0) {
-      console.log('Restaurant Pricing Plan not found');
-      throw new NotFoundException('Restaurant Pricing Plan not found');
+    if (pricingPlan) {
+      const [rowCount] = await this._restaurantPricingPlanRepository.update(
+        { paid: true },
+        { where: { id } }
+      );
+      if (rowCount === 0) {
+        console.log(`The Restaurant Pricing Plan with ID ${id} has already been paid.`);
+      } else {
+        console.log(`Restaurant Pricing Plan with ID ${id} has been paid successfully.`);
+      }
+    } else {
+      console.log(`Restaurant Pricing Plan with ID ${id} was not found`);
     }
   }
 
@@ -117,7 +123,9 @@ export class PricingPlansService {
     return endDate;
   }
 
-  private _getCurrentRestaurantPricingPlans(restaurantId): Promise<RestaurantPricingPlan[] | null> {
+  private _getCurrentRestaurantPricingPlans(
+    restaurantId: string
+  ): Promise<RestaurantPricingPlan[] | null> {
     return this._restaurantPricingPlanRepository.findAll({
       where: {
         restaurantId
@@ -125,13 +133,17 @@ export class PricingPlansService {
     });
   }
 
+  private _getRestaurantPricingPlan(id: string): Promise<RestaurantPricingPlan | null> {
+    return this._restaurantPricingPlanRepository.findOne({ where: { id } });
+  }
+
   @Cron(CronExpression.EVERY_HOUR)
-  private _deleteNotPayedPricingPlans(): void {
+  private _deleteNotPaidPricingPlans(): void {
     const currentTime = new Date();
     const expirationTime = new Date(currentTime.getTime() - 60 * 60 * 1000);
 
     this._restaurantPricingPlanRepository.destroy({
-      where: { startDate: { [Op.lt]: expirationTime }, payed: false }
+      where: { createdAt: { [Op.lt]: expirationTime }, paid: false }
     });
   }
 }
