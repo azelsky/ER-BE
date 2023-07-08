@@ -1,5 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 import { Sequelize } from 'sequelize-typescript';
 
@@ -12,6 +13,7 @@ import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restau
 
 import { Roles } from '@shared/constants';
 import { omit } from '@shared/helper';
+import { IWhere } from '@shared/interfaces';
 
 import { CreateRestaurantDto } from './dto';
 import { TRestaurantDetails, IRelatedRestaurant } from './interfaces';
@@ -151,5 +153,25 @@ export class RestaurantsService {
 
   public delete(id: string): Promise<number> {
     return this._restaurantRepository.destroy({ where: { id } });
+  }
+
+  public async isRestaurantActive(restaurantId: string): Promise<boolean> {
+    const currentTime = new Date();
+    const restaurantPricingPlanWhere: IWhere<RestaurantPricingPlan> = {
+      endDate: { [Op.gte]: currentTime },
+      paid: true
+    };
+
+    const restaurant = await this._restaurantRepository.findOne<Restaurant>({
+      include: [
+        {
+          model: RestaurantPricingPlan,
+          where: restaurantPricingPlanWhere
+        }
+      ],
+      where: { id: restaurantId }
+    });
+
+    return !!restaurant;
   }
 }

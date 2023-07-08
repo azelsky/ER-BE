@@ -15,7 +15,7 @@ export class GuestsController {
   @SkipAuthGuard()
   @Post('call-waiter')
   public async callWaiter(@Body() dto: CallWaiterDto): Promise<IStatusResponse> {
-    return this._guestsService.callWaiter(dto.guestId);
+    return this._guestsService.callWaiter(dto.guestId, dto.tableId);
   }
 
   @SkipAuthGuard()

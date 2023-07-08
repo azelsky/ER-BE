@@ -10,6 +10,7 @@ import {
   NotificationTypeEnum
 } from '@features/notifications/interfaces';
 import { NotificationsService } from '@features/notifications/notifications.service';
+import { RestaurantsService } from '@features/restaurants/restaurants.service';
 import { RTable } from '@features/restaurants/tables/tables.model';
 import { UsersService } from '@features/users/users.service';
 
@@ -28,14 +29,21 @@ export class GuestsService {
     private readonly _notificationsService: NotificationsService,
     private readonly _usersService: UsersService,
     private readonly _tablesService: TablesService,
-    private readonly _waitersService: WaitersService
+    private readonly _waitersService: WaitersService,
+    private readonly _restaurantsService: RestaurantsService
   ) {}
 
-  public async callWaiter(guestId: string): Promise<IStatusResponse> {
+  public async callWaiter(guestId: string, tableId: string): Promise<IStatusResponse> {
     const guest = await this._getGuest(guestId);
     if (!guest) throw new NotFoundException('Guest not found');
 
-    const table = await this._tablesService.getTable(guest.tableId);
+    const table = await this._tablesService.getTable(tableId);
+    if (!table) throw new NotFoundException('Table not found');
+
+    const isActive = await this._restaurantsService.isRestaurantActive(table.restaurantId);
+    if (!isActive) {
+      return { success: false };
+    }
 
     this._waitersService.sendNotifications(table.restaurantId, table.name, guest.name);
     const notificationPayload = {

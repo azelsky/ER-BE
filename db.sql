@@ -4,9 +4,9 @@ CREATE TABLE `user_role` (
   `role_id` char(36) CHARACTER SET utf8 COLLATE utf8_bin,
   `restaurant_id` char(36) CHARACTER SET utf8 COLLATE utf8_bin,
   PRIMARY KEY (`user_id`, `role_id`, `restaurant_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
-  FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants` (`id`)
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- add roles
