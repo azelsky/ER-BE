@@ -9,6 +9,7 @@ interface RestaurantPricingPlanCreationAttr {
   endDate: Date;
   restaurantId: string;
   pricingPlanId: string;
+  paid?: boolean;
 }
 
 @Table({ tableName: 'restaurant_pricing_plan', updatedAt: false })

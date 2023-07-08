@@ -28,16 +28,16 @@ export class RestaurantsService {
     private readonly _pricingPlansService: PricingPlansService
   ) {}
 
-  public async create(
-    restaurant: CreateRestaurantDto,
-    options: CreateOptions = {}
-  ): Promise<Restaurant> {
-    const subdomainExists = await this.isSubdomainExists(restaurant.subdomain);
+  public async create(dto: CreateRestaurantDto, options: CreateOptions = {}): Promise<Restaurant> {
+    const subdomainExists = await this.isSubdomainExists(dto.subdomain);
     if (subdomainExists) {
       throw new ConflictException('Subdomain already exists');
     }
+    const restaurant = await this._restaurantRepository.create(dto, options);
 
-    return this._restaurantRepository.create(restaurant, options);
+    await this._pricingPlansService.createTrialRestaurantPricingPlan(restaurant.id, options);
+
+    return restaurant;
   }
 
   public isSubdomainExists(subdomain: string): Promise<boolean> {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
+import { CreateOptions } from 'sequelize/types/model';
 
 import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
 
@@ -65,13 +66,26 @@ export class PricingPlansService {
     return latestPlan?.endDate || null;
   }
 
+  public async createTrialRestaurantPricingPlan(
+    restaurantId: string,
+    options: CreateOptions = {}
+  ): Promise<RestaurantPricingPlan> {
+    const pricingPlan = await this._pricingPlanRepository.findOne({
+      where: { type: PricingPlanTypes.Trial }
+    });
+
+    return await this._createRestaurantPricingPlan(pricingPlan, restaurantId, true, options);
+  }
+
   private _getPricingPlan(id: string): Promise<PricingPlan> {
     return this._pricingPlanRepository.findOne({ where: { id } });
   }
 
   private async _createRestaurantPricingPlan(
     pricingPlan: PricingPlan,
-    restaurantId: string
+    restaurantId: string,
+    paid?: boolean,
+    options: CreateOptions = {}
   ): Promise<RestaurantPricingPlan> {
     const currentPlans = await this._getCurrentRestaurantPricingPlans(restaurantId);
     const currentEndDate = new Date(this.findPricingPlansEndDate(currentPlans));
@@ -83,12 +97,16 @@ export class PricingPlansService {
 
     const endDate = this._createEndDate(startDate, pricingPlan.type);
 
-    return this._restaurantPricingPlanRepository.create({
-      startDate: startDate,
-      endDate: endDate,
-      restaurantId,
-      pricingPlanId: pricingPlan.id
-    });
+    return this._restaurantPricingPlanRepository.create(
+      {
+        startDate: startDate,
+        endDate: endDate,
+        restaurantId,
+        pricingPlanId: pricingPlan.id,
+        paid
+      },
+      options
+    );
   }
 
   private async _confirmRestaurantPricingPlan(id: string): Promise<void> {
@@ -116,8 +134,10 @@ export class PricingPlansService {
       endDate.setMonth(endDate.getMonth() + 12);
     } else if (pricingPlanType === PricingPlanTypes.SemiAnnual) {
       endDate.setMonth(endDate.getMonth() + 6);
-    } else {
+    } else if (pricingPlanType === PricingPlanTypes.Monthly) {
       endDate.setMonth(endDate.getMonth() + 1);
+    } else {
+      endDate.setDate(endDate.getDate() + 14);
     }
 
     return endDate;
