@@ -40,7 +40,7 @@ export class PricingPlansService {
       data.restaurantId
     );
 
-    return this._paymentService.buy(pricingPlan.price, restaurantPricingPlan.id);
+    return this._paymentService.buy(pricingPlan.price, restaurantPricingPlan.id, data.restaurantId);
   }
 
   public getPricingPlans(): Promise<PricingPlan[]> {

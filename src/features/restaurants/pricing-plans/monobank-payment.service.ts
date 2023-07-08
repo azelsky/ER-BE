@@ -48,11 +48,13 @@ export class MonobankPaymentService {
 
   public async buy(
     price: number,
-    restaurantPricingPlanId: string
+    restaurantPricingPlanId: string,
+    restaurantId: string
   ): Promise<IBuyPricingPlanResponse> {
     const xToken = this._configService.get('MONOBANK_X_TOKEN');
     const appLink = this._configService.get('APP_LINK');
     const handledPrice = price * 100;
+    const redirectUrl = `${appLink}/home/admin/${restaurantId}`;
 
     const response = await this._httpService
       .post<IMonoCreateInvoice>(
@@ -63,7 +65,7 @@ export class MonobankPaymentService {
           merchantPaymInfo: {
             reference: restaurantPricingPlanId
           },
-          redirectUrl: appLink,
+          redirectUrl,
           webHookUrl: `${this._api}/restaurants/pricing-plans/payment-response`,
           validity: 3600
         },
