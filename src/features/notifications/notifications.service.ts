@@ -68,7 +68,7 @@ export class NotificationsService {
           title: notificationPayload.title,
           body: notificationPayload.body,
           // toDO change to restaurant icon
-          icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-84QJaofvWOR-Y_pUqut53hJ_-tkYiRBbWA&usqp=CAU',
+          icon: 'https://www.app.qringer.com/assets/logo.svg',
           sound: 'default'
         }
       },
