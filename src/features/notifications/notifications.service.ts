@@ -61,13 +61,12 @@ export class NotificationsService {
   private async _sendPushNotification(
     deviceToken: string,
     notificationPayload: INotificationPayload
-  ): Promise<string> {
+  ): Promise<void> {
     const message = {
       webpush: {
         notification: {
           title: notificationPayload.title,
           body: notificationPayload.body,
-          // toDO change to restaurant icon
           icon: 'https://www.app.qringer.com/assets/logo.svg',
           sound: 'default'
         }
@@ -77,12 +76,13 @@ export class NotificationsService {
       }
     };
 
-    // add try catch
-    const response = await firebaseAdmin.messaging().send({
-      token: deviceToken,
-      ...message
-    });
-
-    return response;
+    try {
+      await firebaseAdmin.messaging().send({
+        token: deviceToken,
+        ...message
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
