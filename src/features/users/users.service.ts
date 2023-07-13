@@ -120,8 +120,8 @@ export class UsersService {
         {
           model: Device
         }
-      ]
-      // where: { '$restaurants.id$': { [Op.ne]: null } }
+      ],
+      where: { '$restaurants.id$': { [Op.ne]: null } }
     });
   }
 }
