@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 
+import { User } from '@features/users/users.model';
+
 import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
+
+import { IAttributes, IWhere } from '@shared/interfaces';
+import { EmailService } from '@shared/modules/email';
+import {
+  TARIFF_EXPIRATIONS_REMINDER_SUBJECT,
+  tariffExpirationReminder
+} from '@shared/modules/email/templates';
 
 import { MonobankPaymentService } from './monobank-payment.service';
 import { BuyPricingPlanDto } from './pricing-plans.dto';
@@ -14,14 +24,18 @@ import {
   PricingPlanTypes
 } from './pricing-plans.interfaces';
 import { PricingPlan } from './pricing-plans.model';
+import { Restaurant } from '../restaurants.model';
 
 @Injectable()
 export class PricingPlansService {
   constructor(
     @InjectModel(PricingPlan) private readonly _pricingPlanRepository: typeof PricingPlan,
+    @InjectModel(Restaurant) private _restaurantRepository: typeof Restaurant,
     @InjectModel(RestaurantPricingPlan)
     private readonly _restaurantPricingPlanRepository: typeof RestaurantPricingPlan,
-    private readonly _paymentService: MonobankPaymentService
+    private readonly _paymentService: MonobankPaymentService,
+    private readonly _emailService: EmailService,
+    private readonly _configService: ConfigService
   ) {}
 
   public async paymentResponse(request: Request): Promise<void> {
@@ -55,7 +69,7 @@ export class PricingPlansService {
 
   public findPricingPlansEndDate(
     restaurantPricingPlans: RestaurantPricingPlan[] = []
-  ): Date | null {
+  ): string | null {
     const latestPlan = restaurantPricingPlans.reduce((prevPlan, currentPlan) => {
       if ((!prevPlan || currentPlan.endDate > prevPlan.endDate) && currentPlan.paid) {
         return currentPlan;
@@ -99,7 +113,7 @@ export class PricingPlansService {
 
     return this._restaurantPricingPlanRepository.create(
       {
-        startDate: startDate,
+        startDate: startDate.toISOString(),
         endDate: endDate,
         restaurantId,
         pricingPlanId: pricingPlan.id,
@@ -127,7 +141,7 @@ export class PricingPlansService {
     }
   }
 
-  private _createEndDate(startDate, pricingPlanType: PricingPlanTypes): Date {
+  private _createEndDate(startDate, pricingPlanType: PricingPlanTypes): string {
     const endDate = new Date(startDate);
 
     if (pricingPlanType === PricingPlanTypes.Annual) {
@@ -140,7 +154,7 @@ export class PricingPlansService {
       endDate.setDate(endDate.getDate() + 14);
     }
 
-    return endDate;
+    return endDate.toISOString();
   }
 
   private _getCurrentRestaurantPricingPlans(
@@ -164,6 +178,58 @@ export class PricingPlansService {
 
     this._restaurantPricingPlanRepository.destroy({
       where: { createdAt: { [Op.lt]: expirationTime }, paid: false }
+    });
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_9AM)
+  private async _tariffExpirationReminder(): Promise<void> {
+    const currentDate = new Date();
+    const after3Days = new Date();
+    after3Days.setDate(currentDate.getDate() + 3);
+
+    const restaurantPricingPlanAttr: IAttributes<RestaurantPricingPlan> = ['endDate', 'id'];
+    const restaurantPricingPlanWhere: IWhere<RestaurantPricingPlan> = {
+      endDate: {
+        [Op.gte]: currentDate
+      },
+      paid: true
+    };
+
+    const restaurantsWithPricingPlans = await this._restaurantRepository
+      .findAll({
+        include: [
+          {
+            model: RestaurantPricingPlan,
+            as: 'plans',
+            attributes: restaurantPricingPlanAttr,
+            order: [['endDate', 'DESC']],
+            limit: 1,
+            where: restaurantPricingPlanWhere
+          },
+          {
+            model: User
+          }
+        ]
+      })
+      .then(restaurants =>
+        restaurants.filter(
+          restaurant =>
+            restaurant.plans.length && new Date(restaurant.plans[0].endDate) < after3Days
+        )
+      );
+
+    restaurantsWithPricingPlans.forEach(restaurant => {
+      restaurant.users.forEach(user => {
+        this._emailService.send({
+          subject: TARIFF_EXPIRATIONS_REMINDER_SUBJECT,
+          to: user.email,
+          html: tariffExpirationReminder({
+            appLink: this._configService.get('APP_LINK'),
+            restaurantId: restaurant.id,
+            endDate: restaurant.plans[0].endDate
+          })
+        });
+      });
     });
   }
 }

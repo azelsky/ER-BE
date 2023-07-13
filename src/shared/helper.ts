@@ -13,3 +13,10 @@ export function pick<T, K extends keyof T>(obj: T, props: K[]): Pick<T, K> {
   }
   return newObj;
 }
+
+export function calculateDaysLeft(futureDate: Date): number {
+  const currentDate = new Date();
+  const timeDifference = futureDate.getTime() - currentDate.getTime();
+
+  return Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+}

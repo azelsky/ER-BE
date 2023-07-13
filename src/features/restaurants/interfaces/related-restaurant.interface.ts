@@ -4,7 +4,7 @@ import { Restaurant } from '../restaurants.model';
 
 export interface IRelatedRestaurant extends Pick<Restaurant, 'id' | 'name' | 'subdomain'> {
   roles: TRelatedRestaurantRole[];
-  endDate: Date | null;
+  endDate: string | null;
 }
 
 export type TRelatedRestaurantRole = Pick<Role, 'name' | 'value' | 'id'>;

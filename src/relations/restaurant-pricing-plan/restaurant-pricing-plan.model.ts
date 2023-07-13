@@ -5,8 +5,8 @@ import { PricingPlan } from '@features/restaurants/pricing-plans/pricing-plans.m
 import { Restaurant } from '@features/restaurants/restaurants.model';
 
 interface RestaurantPricingPlanCreationAttr {
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   restaurantId: string;
   pricingPlanId: string;
   paid?: boolean;
@@ -25,10 +25,10 @@ export class RestaurantPricingPlan
   id: string;
 
   @Column({ field: 'start_date', type: DataType.DATE })
-  startDate: Date;
+  startDate: string;
 
   @Column({ field: 'end_date', type: DataType.DATE })
-  endDate: Date;
+  endDate: string;
 
   @Column({ field: 'created_at', type: DataType.DATE })
   createdAt: Date;
