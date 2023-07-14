@@ -61,7 +61,7 @@ export class MonobankPaymentService {
         'https://api.monobank.ua/api/merchant/invoice/create',
         {
           amount: handledPrice,
-          ccy: 840,
+          ccy: 980,
           merchantPaymInfo: {
             reference: restaurantPricingPlanId
           },
