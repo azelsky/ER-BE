@@ -3,15 +3,15 @@ import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize
 import { Zone } from './zones.model';
 import { RTable } from '../tables/tables.model';
 
-interface ZoneTableCreationAttr {
+export interface IZoneTableCreationAttr {
   zoneId: string;
   tableId: string;
 }
 
 @Table({ tableName: 'zone_table', createdAt: false, updatedAt: false })
 export class ZoneTable
-  extends Model<ZoneTable, ZoneTableCreationAttr>
-  implements ZoneTableCreationAttr
+  extends Model<ZoneTable, IZoneTableCreationAttr>
+  implements IZoneTableCreationAttr
 {
   @ForeignKey(() => Zone)
   @Column({ type: DataType.UUID, field: 'zone_id' })

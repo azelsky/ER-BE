@@ -15,14 +15,15 @@ import { ZoneTable } from './zone-table.model';
 import { ZoneWaiter } from './zone-waiter.model';
 import { RTable } from '../tables/tables.model';
 import { Waiter } from '../waiters/waiters.model';
-
-interface ZoneCreationAttr {
+export interface IZoneCreationAttr {
   restaurantId: string;
   name: string;
+  waiters: Waiter[];
+  tables: RTable[];
 }
 
 @Table({ tableName: 'zones', createdAt: false, updatedAt: false })
-export class Zone extends Model<Zone, ZoneCreationAttr> {
+export class Zone extends Model<Zone, IZoneCreationAttr> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
