@@ -9,7 +9,6 @@ import { UsersModule } from '@features/users/users.module';
 import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
 import { UserRestaurant } from '@relations/user-restaurant/user-restaurant.model';
 import { UserRole } from '@relations/user-role/user-role.model';
-import { UserTableModule } from '@relations/user-table/user-table.module';
 
 import { EmailModule } from '@shared/modules/email/email.module';
 
@@ -32,6 +31,11 @@ import { WaiterController } from './waiters/waiter.controller';
 import { WaitersController } from './waiters/waiters.controller';
 import { Waiter } from './waiters/waiters.model';
 import { WaitersService } from './waiters/waiters.service';
+import { ZoneTable } from './zones/zone-table.model';
+import { ZoneWaiter } from './zones/zone-waiter.model';
+import { ZonesController } from './zones/zones.controller';
+import { Zone } from './zones/zones.model';
+import { ZonesService } from './zones/zones.service';
 
 @Module({
   controllers: [
@@ -41,7 +45,8 @@ import { WaitersService } from './waiters/waiters.service';
     TablesController,
     WaitersController,
     WaiterController,
-    PricingPlansController
+    PricingPlansController,
+    ZonesController
   ],
   providers: [
     RestaurantsService,
@@ -50,7 +55,8 @@ import { WaitersService } from './waiters/waiters.service';
     GuestsService,
     WaitersService,
     PricingPlansService,
-    MonobankPaymentService
+    MonobankPaymentService,
+    ZonesService
   ],
   imports: [
     SequelizeModule.forFeature([
@@ -61,13 +67,15 @@ import { WaitersService } from './waiters/waiters.service';
       Guest,
       Waiter,
       PricingPlan,
-      RestaurantPricingPlan
+      RestaurantPricingPlan,
+      Zone,
+      ZoneWaiter,
+      ZoneTable
     ]),
     UsersModule,
     RolesModule,
     EmailModule,
     NotificationsModule,
-    UserTableModule,
     HttpModule
   ],
   exports: [RestaurantsService]

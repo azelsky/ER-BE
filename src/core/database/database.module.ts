@@ -7,6 +7,9 @@ import { PricingPlan } from '@features/restaurants/pricing-plans/pricing-plans.m
 import { Restaurant } from '@features/restaurants/restaurants.model';
 import { RTable } from '@features/restaurants/tables/tables.model';
 import { Waiter } from '@features/restaurants/waiters/waiters.model';
+import { ZoneTable } from '@features/restaurants/zones/zone-table.model';
+import { ZoneWaiter } from '@features/restaurants/zones/zone-waiter.model';
+import { Zone } from '@features/restaurants/zones/zones.model';
 import { Role } from '@features/roles/roles.model';
 import { Device } from '@features/users/devices/devices.model';
 import { User } from '@features/users/users.model';
@@ -14,7 +17,6 @@ import { User } from '@features/users/users.model';
 import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restaurant-pricing-plan.model';
 import { UserRestaurant } from '@relations/user-restaurant/user-restaurant.model';
 import { UserRole } from '@relations/user-role/user-role.model';
-import { UserTable } from '@relations/user-table/user-table.model';
 
 @Module({
   imports: [
@@ -36,10 +38,12 @@ import { UserTable } from '@relations/user-table/user-table.model';
             PricingPlan,
             RestaurantPricingPlan,
             Device,
-            UserTable,
             Guest,
             RTable,
-            Waiter
+            Waiter,
+            Zone,
+            ZoneWaiter,
+            ZoneTable
           ],
           autoLoadModels: true,
           dialectOptions: {
