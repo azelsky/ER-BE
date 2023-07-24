@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Includeable } from 'sequelize/types/model';
 import { Sequelize } from 'sequelize-typescript';
 
-import { IAttributes, IWhere } from '@shared/interfaces';
+import { IAttributes, IDeletedEntity, IWhere } from '@shared/interfaces';
 
 import { IZoneTableCreationAttr, ZoneTable } from './zone-table.model';
 import { IZoneWaiterCreationAttr, ZoneWaiter } from './zone-waiter.model';
@@ -25,11 +25,21 @@ export class ZonesService {
     const zonesWhere: IWhere<Zone> = {
       restaurantId
     };
+    const orderField: keyof Zone = 'createdAt';
 
     return this._zoneRepository.findAll({
       where: zonesWhere,
-      include: this._getRelatedZoneRecords()
+      include: this._getRelatedZoneRecords(),
+      order: [[orderField, 'DESC']]
     });
+  }
+
+  public async delete(id: string): Promise<IDeletedEntity> {
+    await this._zoneRepository.destroy({
+      where: { id }
+    });
+
+    return { id };
   }
 
   public async createZone(data: IZoneCreationAttr): Promise<IZone> {

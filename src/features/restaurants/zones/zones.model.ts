@@ -22,7 +22,7 @@ export interface IZoneCreationAttr {
   tables: RTable[];
 }
 
-@Table({ tableName: 'zones', createdAt: false, updatedAt: false })
+@Table({ tableName: 'zones' })
 export class Zone extends Model<Zone, IZoneCreationAttr> {
   @Column({
     type: DataType.UUID,
@@ -33,6 +33,12 @@ export class Zone extends Model<Zone, IZoneCreationAttr> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
+
+  @Column({ field: 'created_at' })
+  createdAt: Date;
+
+  @Column({ field: 'updated_at' })
+  updatedAt: Date;
 
   @ForeignKey(() => Restaurant)
   @Column({ type: DataType.UUID, allowNull: false, field: 'restaurant_id' })
