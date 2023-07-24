@@ -1,10 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-
-import { SkipAuthGuard } from '@core/auth/decorators';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 
 import { IDeletedEntity } from '@shared/interfaces';
 
-import { CreateZoneDto } from './zones.dto';
+import { CreateUpdateZoneDto } from './zones.dto';
 import { IZone } from './zones.interface';
 import { Zone } from './zones.model';
 import { ZonesService } from './zones.service';
@@ -18,13 +16,20 @@ export class ZonesController {
     return this._zoneService.getZones(restaurantId);
   }
 
-  @SkipAuthGuard()
   @Post('create')
   public createZone(
-    @Body() zone: CreateZoneDto,
+    @Body() zone: CreateUpdateZoneDto,
     @Param('restaurantId') restaurantId: string
   ): Promise<IZone> {
     return this._zoneService.createZone({ ...zone, restaurantId });
+  }
+
+  @Put(':zoneId')
+  public editZone(
+    @Body() zone: CreateUpdateZoneDto,
+    @Param('zoneId') zoneId: string
+  ): Promise<IZone> {
+    return this._zoneService.editZone(zoneId, zone);
   }
 
   @Delete(':zoneId')

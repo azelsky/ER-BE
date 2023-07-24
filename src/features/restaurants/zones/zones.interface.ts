@@ -6,3 +6,9 @@ export interface IZone extends Pick<Zone, 'name' | 'id'> {
   waiters: Waiter[];
   tables: RTable[];
 }
+
+export interface IZoneUpdateAttr {
+  name?: string;
+  tables?: RTable[];
+  waiters?: Waiter[];
+}

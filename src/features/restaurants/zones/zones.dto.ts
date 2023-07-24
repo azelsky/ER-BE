@@ -15,7 +15,7 @@ class TableDto implements Partial<RTable> {
   id: string;
 }
 
-export class CreateZoneDto implements Omit<IZoneCreationAttr, 'restaurantId'> {
+export class CreateUpdateZoneDto implements Omit<IZoneCreationAttr, 'restaurantId'> {
   @IsNotEmpty()
   name: string;
 
