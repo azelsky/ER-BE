@@ -45,7 +45,8 @@ export class GuestsService {
       return { success: false };
     }
 
-    this._waitersService.sendNotifications(table.restaurantId, table.name, guest.name);
+    this._waitersService.sendNotifications(table.restaurantId, table, guest.name);
+
     const notificationPayload = {
       title: 'Сповіщення',
       body: `Гість ${guest.name} з столу ${table.name} покликав офіціанта`
@@ -54,7 +55,7 @@ export class GuestsService {
       guestName: guest.name,
       tableName: table.name
     };
-    await this._sendNotificationsToWaiters(
+    await this._sendNotificationsToAdmins(
       guest.tableId,
       NotificationTypeEnum.CallWaiter,
       data,
@@ -84,22 +85,19 @@ export class GuestsService {
     return this._guestRepository.findOne({ where: { id } });
   }
 
-  private async _sendNotificationsToWaiters(
+  private async _sendNotificationsToAdmins(
     tableId: string,
     type: NotificationTypeEnum,
     data: INotificationData,
     payload: INotificationPayload
   ): Promise<void> {
-    // toDo check if a waiter at work
-    let waiters = await this._usersService.getTableWaiters(tableId);
-    if (!waiters.length) {
-      const table = await this._tablesService.getTable(tableId);
-      waiters = await this._usersService.getAllRestaurantWaiters(table.restaurantId);
-    }
-    for (const waiter of waiters) {
+    const table = await this._tablesService.getTable(tableId);
+    const admins = await this._usersService.getRestaurantAdmins(table.restaurantId);
+
+    for (const admin of admins) {
       await this._notificationsService.sendNotification(
-        waiter.id,
-        waiter.devices.map(device => device.token),
+        admin.id,
+        admin.devices.map(device => device.token),
         type,
         data,
         payload

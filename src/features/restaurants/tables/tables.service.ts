@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
+import { IAttributes } from '@shared/interfaces';
+
 import { RTable } from './tables.model';
 
 @Injectable()
@@ -32,10 +34,13 @@ export class TablesService {
   }
 
   public getTables(restaurantId): Promise<RTable[]> {
-    const excludeTableFields: (keyof RTable)[] = ['createdAt', 'updatedAt'];
+    const excludeTableFields: IAttributes<RTable> = ['createdAt', 'updatedAt'];
+    const orderField: keyof RTable = 'createdAt';
+
     return this._tableRepository.findAll({
       where: { restaurantId },
-      attributes: { exclude: excludeTableFields }
+      attributes: { exclude: excludeTableFields },
+      order: [[orderField, 'ASC']]
     });
   }
 }

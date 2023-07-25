@@ -1,7 +1,17 @@
 import { UUIDV4 } from 'sequelize';
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table
+} from 'sequelize-typescript';
 
 import { Restaurant } from '../restaurants.model';
+import { ZoneTable } from '../zones/zone-table.model';
+import { Zone } from '../zones/zones.model';
 
 export interface TableAttr {
   name: string;
@@ -32,4 +42,7 @@ export class RTable extends Model<RTable, TableAttr> implements TableAttr {
 
   @BelongsTo(() => Restaurant, { onDelete: 'CASCADE' })
   restaurant: Restaurant;
+
+  @BelongsToMany(() => Zone, () => ZoneTable)
+  zones: Zone[];
 }

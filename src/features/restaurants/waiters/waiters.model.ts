@@ -1,8 +1,18 @@
 import { UUIDV4 } from 'sequelize';
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table
+} from 'sequelize-typescript';
 
 import { TMessengerType } from './waiters.interfaces';
 import { Restaurant } from '../restaurants.model';
+import { ZoneWaiter } from '../zones/zone-waiter.model';
+import { Zone } from '../zones/zones.model';
 
 interface WaiterCreationAttr {
   name: string;
@@ -56,4 +66,7 @@ export class Waiter extends Model<Waiter, WaiterCreationAttr> {
 
   @BelongsTo(() => Restaurant, { onDelete: 'CASCADE' })
   restaurant: Restaurant;
+
+  @BelongsToMany(() => Zone, () => ZoneWaiter)
+  zones: Zone[];
 }

@@ -4,7 +4,6 @@ import { Op } from 'sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 
 import { Restaurant } from '@features/restaurants/restaurants.model';
-import { RTable } from '@features/restaurants/tables/tables.model';
 import { Role } from '@features/roles/roles.model';
 import { Device } from '@features/users/devices/devices.model';
 
@@ -90,33 +89,13 @@ export class UsersService {
       });
   }
 
-  public getTableWaiters(tableId: string): Promise<User[]> {
-    return this._userRepository.findAll({
-      include: [
-        {
-          model: RTable,
-          through: { where: { tableId } },
-          attributes: []
-        },
-        {
-          model: Device
-        }
-      ],
-      where: { '$tables.id$': { [Op.ne]: null } }
-    });
-  }
-
-  public getAllRestaurantWaiters(restaurantId: string): Promise<User[]> {
+  public getRestaurantAdmins(restaurantId: string): Promise<User[]> {
     return this._userRepository.findAll({
       include: [
         {
           model: Restaurant,
           through: { where: { restaurantId: restaurantId } }
         },
-        // {
-        //   model: Role,
-        //   where: { value: Roles.Waiter }
-        // },
         {
           model: Device
         }

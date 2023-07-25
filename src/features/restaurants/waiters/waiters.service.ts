@@ -3,12 +3,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import { concatMap, delay, first } from 'rxjs';
+import { Op } from 'sequelize';
 import { v4 as uuid } from 'uuid';
 
 import { IDeletedEntity, IStatusResponse } from '@shared/interfaces';
 
 import { TMessengerType } from './waiters.interfaces';
 import { Waiter } from './waiters.model';
+import { RTable } from '../tables/tables.model';
+import { Zone } from '../zones/zones.model';
 
 @Injectable()
 export class WaitersService {
@@ -74,45 +77,74 @@ export class WaitersService {
 
   public async sendNotifications(
     restaurantId: string,
-    tableName: string,
+    table: RTable,
     guestName: string
   ): Promise<IStatusResponse> {
-    const waiters = await this._waiterRepository.findAll({ where: { restaurantId } });
+    const tableName = table.name;
+    let waiters = await this._waiterRepository.findAll({
+      include: [
+        {
+          model: Zone,
+          include: [
+            {
+              model: RTable,
+              where: { id: table.id }
+            }
+          ]
+        }
+      ],
+      where: {
+        isWorking: true,
+        messengerUserId: {
+          [Op.not]: null
+        },
+        '$zones.tables.id$': { [Op.ne]: null }
+      }
+    });
+
+    if (!waiters.length) {
+      waiters = await this._waiterRepository.findAll({
+        where: {
+          restaurantId,
+          isWorking: true,
+          messengerUserId: {
+            [Op.not]: null
+          }
+        }
+      });
+    }
     const telegramBotToken = this._configService.get('TELEGRAM_BOT_TOKEN');
 
     for (const waiter of waiters) {
-      const accountIsConfirmed = !!waiter.messengerUserId;
-      if (waiter.isWorking && accountIsConfirmed) {
-        this._httpService
-          .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-            chat_id: waiter.messengerUserId,
-            text: `🛎Стіл: ${tableName}🛎`
-          })
-          .pipe(
-            delay(1000),
-            concatMap(() =>
-              this._httpService
-                .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-                  chat_id: waiter.messengerUserId,
-                  text: `🕺💃 Гість ${guestName} очікуває вас 🕒`
-                })
-                .pipe(
-                  delay(1000),
-                  concatMap(() =>
-                    this._httpService.post(
-                      `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
-                      {
-                        chat_id: waiter.messengerUserId,
-                        text: `🛎Стіл: ${tableName}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
-                      }
-                    )
+      this._httpService
+        .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+          chat_id: waiter.messengerUserId,
+          text: `🛎Стіл: ${tableName}🛎`
+        })
+        .pipe(
+          delay(1000),
+          concatMap(() =>
+            this._httpService
+              .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                chat_id: waiter.messengerUserId,
+                text: `🕺💃 Гість ${guestName} очікуває вас 🕒`
+              })
+              .pipe(
+                delay(1000),
+                concatMap(() =>
+                  this._httpService.post(
+                    `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
+                    {
+                      chat_id: waiter.messengerUserId,
+                      text: `🛎Стіл: ${tableName}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
+                    }
                   )
                 )
-            ),
-            first()
-          )
-          .subscribe();
-      }
+              )
+          ),
+          first()
+        )
+        .subscribe();
     }
 
     return { success: true };
