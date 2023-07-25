@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { IAttributes } from '@shared/interfaces';
 
 import { RTable } from './tables.model';
+import { Zone } from '../zones/zones.model';
 
 @Injectable()
 export class TablesService {
@@ -11,6 +12,10 @@ export class TablesService {
 
   public async getTable(tableId: string): Promise<RTable> {
     return this._tableRepository.findOne({ where: { id: tableId } });
+  }
+
+  public async getTableWithZone(tableId: string): Promise<RTable> {
+    return this._tableRepository.findOne({ where: { id: tableId }, include: [{ model: Zone }] });
   }
 
   public create(restaurantId: string, name: string): Promise<RTable> {

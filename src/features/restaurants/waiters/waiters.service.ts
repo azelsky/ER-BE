@@ -116,10 +116,13 @@ export class WaitersService {
     const telegramBotToken = this._configService.get('TELEGRAM_BOT_TOKEN');
 
     for (const waiter of waiters) {
+      const zoneName = table.zones[0]?.name;
+      const zone = zoneName ? `, ${zoneName}` : '';
+
       this._httpService
         .post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
           chat_id: waiter.messengerUserId,
-          text: `🛎Стіл: ${tableName}🛎`
+          text: `🛎Стіл: ${tableName}${zone}🛎`
         })
         .pipe(
           delay(1000),
@@ -136,7 +139,7 @@ export class WaitersService {
                     `https://api.telegram.org/bot${telegramBotToken}/sendMessage`,
                     {
                       chat_id: waiter.messengerUserId,
-                      text: `🛎Стіл: ${tableName}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
+                      text: `🛎Стіл: ${tableName}${zone}🛎 \nПоспішіть \n\n\n                       🏃\n __________________________________`
                     }
                   )
                 )

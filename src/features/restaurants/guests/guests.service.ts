@@ -37,7 +37,7 @@ export class GuestsService {
     const guest = await this._getGuest(guestId);
     if (!guest) throw new NotFoundException('Guest not found');
 
-    const table = await this._tablesService.getTable(tableId);
+    const table = await this._tablesService.getTableWithZone(tableId);
     if (!table) throw new NotFoundException('Table not found');
 
     const isActive = await this._restaurantsService.isRestaurantActive(table.restaurantId);
