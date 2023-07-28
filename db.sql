@@ -21,6 +21,15 @@ VALUES
   (UUID(), 'Semi-Annual Plan', 105, 'semi-annual'),
   (UUID(), 'Annual Plan', 199, 'annual');
 
+
+INSERT INTO guest_pages (id, restaurantId, successBackground, successTextColor)
+SELECT
+    UUID() AS id,
+    restaurants.id AS restaurantId,
+    "#732796" AS successBackground,
+    "#f1e5f4" AS successTextColor
+FROM restaurants;
+
 -- postgreSQL
 CREATE TABLE user_role (
   user_id UUID,

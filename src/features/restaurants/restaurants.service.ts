@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 import { CreateOptions } from 'sequelize/types/model';
 import { Sequelize } from 'sequelize-typescript';
 
+import { GuestPagesService } from '@features/restaurants/guest-pages/guest-pages.service';
 import { Role } from '@features/roles/roles.model';
 import { RolesService } from '@features/roles/roles.service';
 import { User } from '@features/users/users.model';
@@ -16,6 +17,7 @@ import { omit } from '@shared/helper';
 import { IWhere } from '@shared/interfaces';
 
 import { CreateRestaurantDto } from './dto';
+import { GuestPage } from './guest-pages/guest-pages.model';
 import { TRestaurantDetails, IRelatedRestaurant } from './interfaces';
 import { PricingPlansService } from './pricing-plans/pricing-plans.service';
 import { Restaurant } from './restaurants.model';
@@ -27,7 +29,8 @@ export class RestaurantsService {
     private readonly _sequelize: Sequelize,
     private readonly _usersService: UsersService,
     private readonly _rolesService: RolesService,
-    private readonly _pricingPlansService: PricingPlansService
+    private readonly _pricingPlansService: PricingPlansService,
+    private readonly _guestPagesService: GuestPagesService
   ) {}
 
   public async create(dto: CreateRestaurantDto, options: CreateOptions = {}): Promise<Restaurant> {
@@ -38,6 +41,8 @@ export class RestaurantsService {
     const restaurant = await this._restaurantRepository.create(dto, options);
 
     await this._pricingPlansService.createTrialRestaurantPricingPlan(restaurant.id, options);
+
+    await this._guestPagesService.create(restaurant.id, options);
 
     return restaurant;
   }
@@ -98,7 +103,12 @@ export class RestaurantsService {
 
     const restaurant = await this._restaurantRepository.findOne({
       attributes,
-      where: { subdomain }
+      where: { subdomain },
+      include: [
+        {
+          model: GuestPage
+        }
+      ]
     });
 
     if (!restaurant) {

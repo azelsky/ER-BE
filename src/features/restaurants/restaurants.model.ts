@@ -1,5 +1,13 @@
 import { UUIDV4 } from 'sequelize';
-import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+  HasOne
+} from 'sequelize-typescript';
 
 import { Role } from '@features/roles/roles.model';
 import { User } from '@features/users/users.model';
@@ -8,6 +16,7 @@ import { RestaurantPricingPlan } from '@relations/restaurant-pricing-plan/restau
 import { UserRestaurant } from '@relations/user-restaurant/user-restaurant.model';
 import { UserRole } from '@relations/user-role/user-role.model';
 
+import { GuestPage } from './guest-pages/guest-pages.model';
 import { RTable } from './tables/tables.model';
 
 interface RestaurantCreationAttr {
@@ -50,4 +59,9 @@ export class Restaurant extends Model<Restaurant, RestaurantCreationAttr> {
 
   @HasMany(() => RTable)
   tables: RTable[];
+
+  @HasOne(() => GuestPage, {
+    onDelete: 'CASCADE'
+  })
+  guestPage: GuestPage;
 }

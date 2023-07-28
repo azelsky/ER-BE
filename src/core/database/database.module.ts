@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 
+import { GuestPage } from '@features/restaurants/guest-pages/guest-pages.model';
 import { Guest } from '@features/restaurants/guests/guests.model';
 import { PricingPlan } from '@features/restaurants/pricing-plans/pricing-plans.model';
 import { Restaurant } from '@features/restaurants/restaurants.model';
@@ -43,7 +44,8 @@ import { UserRole } from '@relations/user-role/user-role.model';
             Waiter,
             Zone,
             ZoneWaiter,
-            ZoneTable
+            ZoneTable,
+            GuestPage
           ],
           autoLoadModels: true,
           dialectOptions: {

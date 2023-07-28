@@ -12,6 +12,9 @@ import { UserRole } from '@relations/user-role/user-role.model';
 
 import { EmailModule } from '@shared/modules/email/email.module';
 
+import { GuestPagesController } from './guest-pages/guest-pages.controller';
+import { GuestPage } from './guest-pages/guest-pages.model';
+import { GuestPagesService } from './guest-pages/guest-pages.service';
 import { GuestsController } from './guests/guests.controller';
 import { Guest } from './guests/guests.model';
 import { GuestsService } from './guests/guests.service';
@@ -46,7 +49,8 @@ import { ZonesService } from './zones/zones.service';
     WaitersController,
     WaiterController,
     PricingPlansController,
-    ZonesController
+    ZonesController,
+    GuestPagesController
   ],
   providers: [
     RestaurantsService,
@@ -56,7 +60,8 @@ import { ZonesService } from './zones/zones.service';
     WaitersService,
     PricingPlansService,
     MonobankPaymentService,
-    ZonesService
+    ZonesService,
+    GuestPagesService
   ],
   imports: [
     SequelizeModule.forFeature([
@@ -70,7 +75,8 @@ import { ZonesService } from './zones/zones.service';
       RestaurantPricingPlan,
       Zone,
       ZoneWaiter,
-      ZoneTable
+      ZoneTable,
+      GuestPage
     ]),
     UsersModule,
     RolesModule,
