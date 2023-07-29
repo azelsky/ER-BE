@@ -1,5 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 
+import { Roles } from '@shared/constants';
+import { RolesAllowed } from '@shared/decorators/roles-allowed.decorator';
+import { RolesGuard } from '@shared/guards/roles.guard';
 import { IDeletedEntity } from '@shared/interfaces';
 
 import { CreateUpdateZoneDto } from './zones.dto';
@@ -16,6 +19,8 @@ export class ZonesController {
     return this._zoneService.getZones(restaurantId);
   }
 
+  @RolesAllowed(Roles.Admin)
+  @UseGuards(RolesGuard)
   @Post('create')
   public createZone(
     @Body() zone: CreateUpdateZoneDto,
@@ -24,6 +29,8 @@ export class ZonesController {
     return this._zoneService.createZone({ ...zone, restaurantId });
   }
 
+  @RolesAllowed(Roles.Admin)
+  @UseGuards(RolesGuard)
   @Put(':zoneId')
   public editZone(
     @Body() zone: CreateUpdateZoneDto,
@@ -32,6 +39,8 @@ export class ZonesController {
     return this._zoneService.editZone(zoneId, zone);
   }
 
+  @RolesAllowed(Roles.Admin)
+  @UseGuards(RolesGuard)
   @Delete(':zoneId')
   public delete(@Param('zoneId') zoneId: string): Promise<IDeletedEntity> {
     return this._zoneService.delete(zoneId);
