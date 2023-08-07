@@ -30,6 +30,9 @@ SELECT
     "#f1e5f4" AS successTextColor
 FROM restaurants;
 
+ALTER TABLE pricing_plans
+ADD display_price DECIMAL(10,2);
+
 -- postgreSQL
 CREATE TABLE user_role (
   user_id UUID,

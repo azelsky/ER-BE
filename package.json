@@ -9,7 +9,6 @@
     "build": "nest build",
     "deploy:dev": "nest build && scp -r /Users/andriizelinskyi/Projects/ER/ER-BE/dist /Users/andriizelinskyi/Projects/ER/ER-BE/.development.env qringer@qringer.ftp.tools:/home/qringer/dev-api.qringer.com/www && HOST_ID=2705058 node restart-server.js",
     "deploy:demo": "nest build && scp -r /Users/andriizelinskyi/Projects/ER/ER-BE/dist /Users/andriizelinskyi/Projects/ER/ER-BE/.demo.env qringer@qringer.ftp.tools:/home/qringer/demo-api.qringer.com/www && HOST_ID=2713103 node restart-server.js",
-    "deploy:prod": "nest build && scp -r /Users/andriizelinskyi/Projects/ER/ER-BE/dist /Users/andriizelinskyi/Projects/ER/ER-BE/.production.env qringer@qringer.ftp.tools:/home/qringer/api.qringer.com/www && HOST_ID=2702198 node restart-server.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=production node dist/main",
     "start:dev": "cross-env NODE_ENV=development LOCAL=true nest start --watch",

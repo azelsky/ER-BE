@@ -21,6 +21,9 @@ export class PricingPlan extends Model<PricingPlan> {
   @Column({ type: DataType.DECIMAL(10, 2) })
   price: number;
 
+  @Column({ type: DataType.DECIMAL(10, 2), field: 'display_price' })
+  displayPrice: number;
+
   @Column({ type: DataType.STRING, allowNull: false })
   type: PricingPlanTypes;
 

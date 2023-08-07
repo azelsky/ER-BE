@@ -23,7 +23,6 @@ export class GuestPage
 
   @Column({
     type: DataType.STRING,
-    unique: true,
     allowNull: false,
     defaultValue: PRIMARY_COLOR['700']
   })
@@ -31,7 +30,6 @@ export class GuestPage
 
   @Column({
     type: DataType.STRING,
-    unique: true,
     allowNull: false,
     defaultValue: PRIMARY_COLOR['50']
   })
